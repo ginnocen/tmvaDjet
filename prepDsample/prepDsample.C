@@ -4,7 +4,7 @@ using namespace std;
 #include "includes/d_jet.C"
 #include "includes/prepD.h"
 
-Bool_t istest=false;
+Bool_t istest = false;
 void prepDsample(string inputname="", string outputname="", Float_t jetptcut=80, Float_t jetetamincut=0.3, Float_t jetetamaxcut=1.6, Int_t maxevt=-1)
 {
   if(istest)
@@ -18,25 +18,21 @@ void prepDsample(string inputname="", string outputname="", Float_t jetptcut=80,
     }
 
   djet djt(inputname);
-  TFile* inf = TFile::Open(inputname.c_str());
-  TTree* intree = (TTree*)inf->Get("djt");
-  djt.Init(intree);
 
-  TFile* fout = new TFile(outputname.c_str(), "recreate");
+  TFile* outf = new TFile(outputname.c_str(), "recreate");
   TTree* outtree = new TTree("tmvadjt","");
   prepD pd(outtree);
 
-  int64_t nentries = intree->GetEntriesFast();
+  int64_t nentries = djt.fChain->GetEntriesFast();
   nentries = (maxevt>0&&istest)?maxevt:nentries;
   for(int i=0;i<nentries;i++)
     {
-      if(i%10000==0) cout<<left<<setw(10)<<i<<" / "<<nentries<<endl;
+      if(i%100000==0) cout<<left<<"  "<<setw(10)<<i<<" / "<<nentries<<endl;
       pd.clear_vectors();
       //
-      intree->GetEntry(i);
+      djt.fChain->GetEntry(i);
       //
       if(!(djt.Dsize>0 && djt.njet_akpu3pf)) continue;
-      //cout<<i<<"  "<<djt.Dsize<<"  "<<djt.njet_akpu3pf<<endl;
       int size = 0;
       for(int jd=0;jd<djt.Dsize;jd++)
 	{
@@ -47,20 +43,18 @@ void prepDsample(string inputname="", string outputname="", Float_t jetptcut=80,
 		  Float_t deltaphi = TMath::ACos(TMath::Cos((*djt.Dphi)[jd] - (*djt.jetphi_akpu3pf)[jj]));
 		  Float_t deltaeta = (*djt.Deta)[jd] - (*djt.jeteta_akpu3pf)[jj];
 		  Float_t deltaR = TMath::Sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
-		  //cout<<" "<<deltaR<<endl;
 		  pd.copy_index(djt,jd,deltaR);
 		  size++;
 		}
 	    }
 	}
-      if(size==0) continue;
       pd.copy_variables(djt,size);
       outtree->Fill();
     }
 
-  fout->cd();
+  outf->cd();
   outtree->Write();
-  fout->Write();
-  fout->Close();
+  outf->Write();
+  outf->Close();
 
 }

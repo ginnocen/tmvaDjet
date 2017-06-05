@@ -108,8 +108,8 @@ class prepD
   ~prepD() {};
   
   void create_tree(TTree* t);
-  void copy_variables(djet dt, int size);
-  void copy_index(djet dt, int i, float dR);
+  void copy_variables(djet& dt, int size);
+  void copy_index(djet& dt, int i, float dR);
   void clear_vectors();
 
 };
@@ -189,7 +189,7 @@ void prepD::create_tree(TTree* t)
   t->Branch("DdeltaR", &DdeltaR);
 }
 
-void prepD::copy_variables(djet dt, int size)
+void prepD::copy_variables(djet& dt, int size)
 {
   isPP = dt.isPP;
   hiBin = dt.hiBin;
@@ -206,7 +206,7 @@ void prepD::copy_variables(djet dt, int size)
   PVnchi2 = dt.PVnchi2;
 }
 
-void prepD::copy_index(djet dt, int i, float dR)
+void prepD::copy_index(djet& dt, int i, float dR)
 {
   Dindex.push_back((*dt.Dindex)[i]);
   Dmass.push_back((*dt.Dmass)[i]);
