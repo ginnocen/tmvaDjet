@@ -23,13 +23,13 @@ void variables(TString inputSname, TString inputBname, TString outputname,
   setth1d(hSgl);
   hSgl->GetXaxis()->SetLabelSize(0.045);
   hSgl->GetYaxis()->SetLabelSize(0.045);
-  hSgl->GetYaxis()->SetTitleOffset(1.45);
+  hSgl->GetYaxis()->SetTitleOffset(1.60);
   hSgl->GetXaxis()->SetTitleOffset(1.10);
   TH1D* hBkg = new TH1D("hBkg",Form(";%s;Probability",varlatex.Data()),varn,varmin,varmax);
   setth1d(hBkg);
   hBkg->GetXaxis()->SetLabelSize(0.045);
   hBkg->GetYaxis()->SetLabelSize(0.045);
-  hBkg->GetYaxis()->SetTitleOffset(1.45);
+  hBkg->GetYaxis()->SetTitleOffset(1.60);
   hBkg->GetXaxis()->SetTitleOffset(1.10);
 
   signal->Project("hSgl",variable,Form("%s",sels.Data()));
