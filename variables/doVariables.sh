@@ -8,10 +8,10 @@ DRBIN=(0 0.05 0.1 0.2 0.5)
 COLSYST=('pp')
 VAR=('(DsvpvDistance/DsvpvDisErr)' 'Dchi2cl' 'Dalpha')
 VARNAME=('decaylength' 'vprob' 'alpha')
-VARLATEX=('d_{0}/Err(d_{0})' 'vertexProbability' 'alpha')
+VARLATEX=('d_{0}/Err(d_{0})' 'vertexProbability' '#alpha')
 VARN=(50 50 50)
-VARMIN=(2.5 0 0)
-VARMAX=(12.5 1 3.2)
+VARMIN=(0 0 0)
+VARMAX=(15 1 0.2)
 OUTPUT='plots/variables'
 #
 INPUTS=('/export/d00/scratch/jwang/Djets/MC/tmva_DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight_jetpt_80_jeteta_0p3_1p6.root')
@@ -79,9 +79,9 @@ if [ $DOVARIABLES -eq 1 ]; then
 		do
                     echo "-- Processing pT bin: ${PTBIN[i]} - ${PTBIN[i+1]} GeV/c, deltaR bin: ${DRBIN[l]} - ${DRBIN[l+1]}, variable: ${VAR[k]}"
 		    OUTPUTNAME=${OUTPUT}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}
-                    echo
 		    ./variables.exe ${INPUTSNAME[j]} ${INPUTBNAME[j]} $OUTPUTNAME ${MYCUTS[j]} ${MYCUTB[j]} ${VAR[k]} ${VARNAME[k]} ${VARLATEX[k]} ${VARN[k]} ${VARMIN[k]} ${VARMAX[k]} ${COLSYST[j]} ${PTBIN[i]} ${PTBIN[i+1]} ${DRBIN[l]} ${DRBIN[l+1]}
                     #root -l -b -q 'variables.C+('\"${VAR[k]}\"','\"${VARNAME[k]}\"','\"${VARLATEX[k]}\"','${VARN[k]}','${VARMIN[k]}','${VARMAX[k]}','\"${COLSYST[j]}\"','${PTBIN[i]}','${PTBIN[i+1]}')'
+                    echo
                     k=$(($k+1))
 		done
 		l=$(($l+1))

@@ -1,5 +1,4 @@
 using namespace std;
-//#include "../readxml/readxml.h"
 #include "../uti.h"
 
 void variables(TString inputSname, TString inputBname, TString outputname,
@@ -24,25 +23,24 @@ void variables(TString inputSname, TString inputBname, TString outputname,
   setth1d(hSgl);
   hSgl->GetXaxis()->SetLabelSize(0.045);
   hSgl->GetYaxis()->SetLabelSize(0.045);
-  hSgl->GetYaxis()->SetTitleOffset(1.30);
+  hSgl->GetYaxis()->SetTitleOffset(1.45);
   hSgl->GetXaxis()->SetTitleOffset(1.10);
   TH1D* hBkg = new TH1D("hBkg",Form(";%s;Probability",varlatex.Data()),varn,varmin,varmax);
   setth1d(hBkg);
   hBkg->GetXaxis()->SetLabelSize(0.045);
   hBkg->GetYaxis()->SetLabelSize(0.045);
-  hBkg->GetYaxis()->SetTitleOffset(1.30);
+  hBkg->GetYaxis()->SetTitleOffset(1.45);
   hBkg->GetXaxis()->SetTitleOffset(1.10);
 
   signal->Project("hSgl",variable,Form("%s",sels.Data()));
   background->Project("hBkg",variable,Form("%s",selb.Data()));
-
-  cout<<hBkg->GetEntries()<<" "<<hSgl->GetEntries()<<endl;
+  cout<<hBkg->Integral()<<" "<<hSgl->Integral()<<endl;
   
-  hBkg->Scale(1./hBkg->GetEntries());
-  hSgl->Scale(1./hSgl->GetEntries()); 
+  hBkg->Scale(1./hBkg->Integral());
+  hSgl->Scale(1./hSgl->Integral()); 
 
   TCanvas* c = new TCanvas("c","",600,600);
-  hBkg->SetMaximum(max(hBkg->GetMaximum(),hSgl->GetMaximum())*1.2);
+  hBkg->SetMaximum(max(hBkg->GetMaximum(),hSgl->GetMaximum())*1.4);
 
   hBkg->SetLineColor(kBlue+1);
   hBkg->SetFillStyle(1001);
@@ -59,12 +57,16 @@ void variables(TString inputSname, TString inputBname, TString outputname,
   hBkg->Draw();
   hSgl->Draw("same");
   
-  TLegend *leg = new TLegend(0.55,0.68,0.98,0.86);
+  TLatex* texpt = new TLatex(0.57,0.85,Form("%.0f < p_{T} < %.0f GeV",ptmin,ptmax));
+  settex(texpt);
+  TLatex* texdr = new TLatex(0.57,0.81,Form("%.2f < #DeltaR < %.2f",drmin,drmax));
+  settex(texdr);
+  TLegend *leg = new TLegend(0.55,0.68,0.98,0.78);
   setleg(leg);
-  leg->AddEntry((TObject*)0,Form("%.0f < p_{T} < %.0f GeV",ptmin,ptmax),NULL);
-  leg->AddEntry((TObject*)0,Form("%.2f < #DeltaR < %.2f GeV",ptmin,ptmax),NULL);
   leg->AddEntry(hBkg,"Background","f");
   leg->AddEntry(hSgl,"Signal","f");
+  texpt->Draw();
+  texdr->Draw();
   leg->Draw("same");
   
   drawCMS(collisionsyst);
