@@ -94,7 +94,7 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
   f->ReleaseParameter(1);
   f->SetParLimits(1,1.86,1.87);
   f->ReleaseParameter(11);
-  f->SetParLimits(11,-1.,1.);
+  f->SetParLimits(11,-0.5,0.5);
   h->Fit("f","L q","",minhisto,maxhisto);
   h->Fit("f","L q","",minhisto,maxhisto);
   h->Fit("f","L q","",minhisto,maxhisto);
