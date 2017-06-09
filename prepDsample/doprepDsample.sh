@@ -1,10 +1,15 @@
 #!/bin/sh
 
 ##
-INPUTDIR="/export/d00/scratch/jwang/Djets/data/"
-INPUTSUB="DjetFiles_pp_5TeV_HeavyFlavor_Dfinder_Data_20170405_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar"
-OUTPUTDIR="/export/d00/scratch/jwang/Djets/data/"
-OUTPUTSUB="DjetFiles_pp_5TeV_HeavyFlavor_Dfinder_Data_20170405_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar"
+INPUTDIR="/export/d00/scratch/jwang/Djets/MC/"
+INPUTSUB="DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight"
+OUTPUTDIR="/export/d00/scratch/jwang/Djets/MC/"
+OUTPUTSUB="DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight"
+
+#INPUTDIR="/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/"
+#INPUTSUB="merged"
+#OUTPUTDIR="/export/d00/scratch/jwang/Djets/data/"
+#OUTPUTSUB="DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1"
 
 JETPT=80
 JETETAMIN=0.3
