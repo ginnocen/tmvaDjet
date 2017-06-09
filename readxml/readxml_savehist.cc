@@ -114,6 +114,8 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
   TTree* ntmc = (TTree*)inputmc->Get("tmvadjt");
   mvaDmc.setbranchaddress(ntmc);
   Int_t nentriesmc = ntmc->GetEntries();
+  cout<<endl;
+  cout<<"  Filling invariant mass histograms - MC..."<<endl;
   for(int i=0;i<nentriesmc;i++)
     {
       ntmc->GetEntry(i);
@@ -138,6 +140,7 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
   TTree* ntdata = (TTree*)inputdata->Get("tmvadjt");
   mvaDdata.setbranchaddress(ntdata);
   Int_t nentriesdata = ntdata->GetEntries();
+  cout<<"  Filling invariant mass histograms - data..."<<endl;
   for(int i=0;i<nentriesdata;i++)
     {
       ntdata->GetEntry(i);

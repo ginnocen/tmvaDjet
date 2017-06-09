@@ -5,8 +5,8 @@ DOREADXML_SAVEHIST=1
 DOREADXML_FITHIST=1
 
 #
-PTMIN=(6)
-PTMAX=(1000)
+PTMIN=(4)
+PTMAX=(10)
 DRBIN=(0 0.05 0.1 0.2 0.5)
 COLSYST=('pp')
 MVA='CutsSA'
@@ -20,6 +20,7 @@ MYCUTB=("${CUT[0]}&&TMath::Abs(Dmass-1.865)>0.1&&TMath::Abs(Dmass-1.865)<0.15")
 INPUTMCNAME=("${INPUTSNAME[0]}")
 INPUTDANAME=("${INPUTBNAME[0]}")
 
+# Do not touch the macros below if you don't know what they mean #
 ##
 nPT=$((${#PTMIN[@]}))
 nDR=$((${#DRBIN[@]}-1))
@@ -75,12 +76,11 @@ then
 
 		cd myTMVA/
 		echo -e "-- Processing \033[1;33mTMVAClassification.C ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
-		echo
-		#./TMVAClassification.exe ${INPUTSNAME[j]} ${INPUTBNAME[j]} ${MYCUTS[j]} ${MYCUTB[j]} ${COLSYST[j]} ${PTMIN[i]} ${PTMAX[i]} ${DRBIN[l]} ${DRBIN[l+1]}
 		root -l -b -q 'TMVAClassification.C+('\"${INPUTSNAME[j]}\"','\"${INPUTBNAME[j]}\"','\"${MYCUTS[j]}\"','\"${MYCUTB[j]}\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
 		mv weights/TMVAClassification_${MVA[k]}.weights.xml weights/TMVA_${MVA[k]}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}.weights.xml
 		mv weights/TMVAClassification_${MVA[k]}.class.C weights/TMVA_${MVA[k]}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}.class.C
 		cd ..
+		echo
 
 		l=$(($l+1))
 	    done    
@@ -121,7 +121,7 @@ then
 		    then
 			root -b -q 'readxml_savehist.cc+('\"${INPUTMCNAME[j]}\"','\"${INPUTDANAME[j]}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
 		    else
-			echo -e "  \033[1;31mError${NC}: no weight file: ../myTMVA/weights/${TEND}.weights.xml"
+			echo -e "  \033[1;31mError:${NC} no weight file: ../myTMVA/weights/${TEND}.weights.xml"
 		    fi
 		    echo
 		fi
@@ -133,7 +133,7 @@ then
 		    then
 			root -b -q 'readxml_fithist.cc+('\"${TEND}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
 		    else
-			echo -e "  \033[1;31mError${NC}: no savehist file: rootfiles/fmass_${TEND}.root"
+			echo -e "  \033[1;31mError:${NC} no savehist file: rootfiles/fmass_${TEND}.root"
 		    fi
 		    echo
 		fi

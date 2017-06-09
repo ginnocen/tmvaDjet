@@ -4,7 +4,7 @@
 #include "../uti.h"
 
 const int NEff = 100;
-Double_t effS[NEff], aS[NEff], aB[NEff], aSig[NEff];
+Double_t effS[NEff], effB[NEff], aS[NEff], aB[NEff], aSig[NEff];
 TString outputsavehist = "rootfiles/fmass";
 TString outputfit = "plotfits/cmass";
 TString outputsignificance = "plots/significance";
