@@ -3,21 +3,21 @@
 DOVARIABLES=1
 
 #
-PTMIN=(10)
-PTMAX=(30)
+PTMIN=(4 4 10 30)
+PTMAX=(10 20 30 1000)
 DRBIN=(0 0.05 0.1 0.2 0.5)
 COLSYST=('pp')
-VAR=('(DsvpvDistance/DsvpvDisErr)' 'Dchi2cl' 'Dalpha')
-VARNAME=('decaylength' 'vprob' 'alpha')
-VARLATEX=('d_{0}/Err(d_{0})' 'vertexProbability' '#alpha')
-VARN=(50 50 50)
-VARMIN=(0 0 0)
-VARMAX=(15 1 0.2)
+VAR=('(DsvpvDistance/DsvpvDisErr)' 'Dchi2cl' 'Dalpha' 'Dtrk1Pt' 'Dtrk2Pt')
+VARNAME=('decaylength' 'vprob' 'alpha' 'trk1pt' 'trk2pt')
+VARLATEX=('d_{0}/Err(d_{0})' 'vertexProbability' '#alpha' 'trk1pt' 'trk2pt')
+VARN=(50 50 50 50 50)
+VARMIN=(0 0 0 0 0)
+VARMAX=(15 1 0.2 20 20)
 OUTPUT='plots/variables'
 #
 INPUTSNAME=('/export/d00/scratch/jwang/Djets/MC/tmva_DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight_jetpt_80_jeteta_0p3_1p6.root')
 INPUTBNAME=('/export/d00/scratch/jwang/Djets/data/tmva_DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1_jetpt_80_jeteta_0p3_1p6.root')
-CUT=('TMath::Abs(Dtrk1Eta)<2.0&&TMath::Abs(Dtrk2Eta)<2.0&&Dtrk1Pt>2.0&&Dtrk2Pt>2.0&&(Dtrk1PtErr/Dtrk1Pt)<0.3&&(Dtrk2PtErr/Dtrk2Pt)<0.3&&Dtrk1highPurity&&Dtrk2highPurity&&fabs(Dy)<2.0&&(DsvpvDistance/DsvpvDisErr)>0.0&&Dalpha<0.2&&Dchi2cl>0.05')
+CUT=('TMath::Abs(Dtrk1Eta)<2.0&&TMath::Abs(Dtrk2Eta)<2.0&&Dtrk1Pt>2.0&&Dtrk2Pt>1.5&&(Dtrk1PtErr/Dtrk1Pt)<0.3&&(Dtrk2PtErr/Dtrk2Pt)<0.3&&Dtrk1highPurity&&Dtrk2highPurity&&fabs(Dy)<2.0&&(DsvpvDistance/DsvpvDisErr)>0.0&&Dalpha<0.2&&Dchi2cl>0.05')
 MYCUTS=("${CUT[0]}&&Dgen==23333")
 MYCUTB=("${CUT[0]}&&TMath::Abs(Dmass-1.865)>0.1&&TMath::Abs(Dmass-1.865)<0.15")
 

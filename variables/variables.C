@@ -57,14 +57,21 @@ void variables(TString inputSname, TString inputBname, TString outputname,
   hBkg->Draw();
   hSgl->Draw("same");
   
-  TLatex* texpt = new TLatex(0.57,0.85,Form("%.0f < p_{T} < %.0f GeV",ptmin,ptmax));
-  settex(texpt);
-  TLatex* texdr = new TLatex(0.57,0.81,Form("%.2f < #DeltaR < %.2f",drmin,drmax));
-  settex(texdr);
-  TLegend *leg = new TLegend(0.55,0.68,0.98,0.78);
+  TLatex* texD = new TLatex(0.22,0.87, "D#scale[0.6]{#lower[-0.7]{0}} + #bar{D}#scale[0.6]{#lower[-0.7]{0}}");
+  settex(texD,0.04,12);
+  TLatex* texY = new TLatex(0.22,0.81, "|y| < 1");
+  settex(texY,0.04,12);
+  TLatex* texpt = new TLatex(0.92,0.85,Form("%.0f < p_{T} < %.0f GeV",ptmin,ptmax));
+  settex(texpt,0.04,32);
+  TLatex* texdr = new TLatex(0.92,0.81,Form("%.2f < #DeltaR < %.2f",drmin,drmax));
+  settex(texdr,0.04,32);
+  TLegend *leg = new TLegend(0.64,0.68,1.05,0.78);
+
   setleg(leg);
   leg->AddEntry(hBkg,"Background","f");
   leg->AddEntry(hSgl,"Signal","f");
+  texD->Draw();
+  texY->Draw();
   texpt->Draw();
   texdr->Draw();
   leg->Draw("same");
