@@ -1,7 +1,7 @@
 #!/bin/bash
 
-DOTMVA=0
-DOREADXML_SAVEHIST=0
+DOTMVA=1
+DOREADXML_SAVEHIST=1
 DOREADXML_FITHIST=1
 
 #
@@ -31,7 +31,7 @@ float_to_string()
 {
     if [[ $# -ne 1 ]]
     then
-        echo "  Error: invalid argument number - float_to_string()"
+        echo -e "  \033[1;31mError:${NC} invalid argument number - float_to_string()"
         exit 1
     fi
     part1=`echo $1 | awk -F "." '{print $1}'`
@@ -41,7 +41,7 @@ float_to_string()
 NC='\033[0m'
 
 #
-FOLDERS=("myTMVA/weights" "myTMVA/ROOT" "readxml/rootfiles" "readxml/plotfits" "readxml/plots")
+FOLDERS=("myTMVA/weights" "myTMVA/ROOT" "readxml/rootfiles" "readxml/plotfits" "readxml/plots" "readxml/results")
 for i in ${FOLDERS[@]}
 do
     if [ ! -d $i ]
@@ -74,7 +74,7 @@ then
                 tDRMAX=$rt_float_to_string
 
 		cd myTMVA/
-		echo -e "-- Processing \033[1;33m TMVAClassification.C ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
+		echo -e "-- Processing \033[1;33mTMVAClassification.C ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
 		echo
 		#./TMVAClassification.exe ${INPUTSNAME[j]} ${INPUTBNAME[j]} ${MYCUTS[j]} ${MYCUTB[j]} ${COLSYST[j]} ${PTMIN[i]} ${PTMAX[i]} ${DRBIN[l]} ${DRBIN[l+1]}
 		root -l -b -q 'TMVAClassification.C+('\"${INPUTSNAME[j]}\"','\"${INPUTBNAME[j]}\"','\"${MYCUTS[j]}\"','\"${MYCUTB[j]}\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
@@ -116,24 +116,24 @@ then
 
 		if [ $DOREADXML_SAVEHIST -eq 1 ]
 		then
-		    echo -e "-- Processing \033[1;33m readxml_savehist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
+		    echo -e "-- Processing \033[1;33mreadxml_savehist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
 		    if [ -f "../myTMVA/weights/${TEND}.weights.xml" ]
 		    then
 			root -b -q 'readxml_savehist.cc+('\"${INPUTMCNAME[j]}\"','\"${INPUTDANAME[j]}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
 		    else
-			echo "  Error: no weight file: ../myTMVA/weights/${TEND}.weights.xml"
+			echo -e "  \033[1;31mError${NC}: no weight file: ../myTMVA/weights/${TEND}.weights.xml"
 		    fi
 		    echo
 		fi
 
 		if [ $DOREADXML_FITHIST -eq 1 ]
 		then
-		    echo -e "-- Processing \033[1;33m readxml_fithist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
+		    echo -e "-- Processing \033[1;33mreadxml_fithist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
 		    if [ -f "rootfiles/fmass_${TEND}.root" ]
 		    then
-			root -b -q 'readxml_fithist.cc+('\"${TEND}\"','\"${TEND}\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
+			root -b -q 'readxml_fithist.cc+('\"${TEND}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
 		    else
-			echo "  Error: no savehist file: rootfiles/fmass_${TEND}.root"
+			echo -e "  \033[1;31mError${NC}: no savehist file: rootfiles/fmass_${TEND}.root"
 		    fi
 		    echo
 		fi

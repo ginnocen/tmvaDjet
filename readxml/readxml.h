@@ -9,6 +9,7 @@ TString outputsavehist = "rootfiles/fmass";
 TString outputfit = "plotfits/cmass";
 TString outputsignificance = "plots/significance";
 TString outputfitmax = "plots/cmass";
+TString outputresult = "results/significance";
 
 void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped, 
 	 TString outputname, Float_t* results, TString collisionsyst, 
