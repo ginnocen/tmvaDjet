@@ -10,7 +10,6 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
 		      Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax)
 {
   //Bool_t isPbPb = collisionsyst=="PbPb"?true:false;
-  void calRatio(Float_t* results, Bool_t verbose=false);
 
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
@@ -155,7 +154,7 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
 	}
     }
 
-  TFile* outf = new TFile(Form("%s.root",outputname.Data()),"recreate");
+  TFile* outf = new TFile(Form("%s_%s.root",outputsavehist.Data(),outputname.Data()),"recreate");
   outf->cd();
   for(n=0;n<NEff;n++)
     {

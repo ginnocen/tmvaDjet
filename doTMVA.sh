@@ -1,7 +1,8 @@
 #!/bin/bash
 
 DOTMVA=0
-DOREADXML_SAVEHIST=1
+DOREADXML_SAVEHIST=0
+DOREADXML_FITHIST=1
 
 #
 PTMIN=(6)
@@ -40,7 +41,7 @@ float_to_string()
 NC='\033[0m'
 
 #
-FOLDERS=("myTMVA/weights" "myTMVA/ROOT" "readxml/rootfiles")
+FOLDERS=("myTMVA/weights" "myTMVA/ROOT" "readxml/rootfiles" "readxml/plotfits" "readxml/plots")
 for i in ${FOLDERS[@]}
 do
     if [ ! -d $i ]
@@ -90,7 +91,7 @@ then
 fi
 
 # readxml.cc #
-if [ $DOREADXML_SAVEHIST -eq 1 ]
+if [[ $DOREADXML_SAVEHIST -eq 1 || $DOREADXML_FITHIST -eq 1 ]]
 then
     j=0
     while ((j<$nCOL))
@@ -111,17 +112,34 @@ then
                 tDRMAX=$rt_float_to_string
 
                 cd readxml/
-		echo -e "-- Processing \033[1;33m readxml_savehist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
-		if [ -f "../myTMVA/weights/TMVA_${MVA[k]}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}.weights.xml" ]
+		TEND=TMVA_${MVA[k]}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}
+
+		if [ $DOREADXML_SAVEHIST -eq 1 ]
 		then
-		    TEND=TMVA_${MVA[k]}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}
-		    root -b -q 'readxml_savehist.cc+('\"${INPUTMCNAME[j]}\"','\"${INPUTDANAME[j]}\"','\"rootfiles/fmass_${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
-		    #./readxml_hist.exe ${INPUTMCNAME[j]} ${INPUTDANAME[j]} rootfiles/fmass_TMVA_${MVA[k]}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}.root ../myTMVA/weights/TMVA_${MVA[k]}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}.weights.xml ${COLSYST[j]} ${PTMIN[i]} ${PTMAX[i]} ${DRBIN[l]} ${DRBIN[l+1]}
-		else
-		    echo "  Error: no weight file: ../myTMVA/weights/TMVA_${MVA[k]}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}.weights.xml"
+		    echo -e "-- Processing \033[1;33m readxml_savehist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
+		    if [ -f "../myTMVA/weights/${TEND}.weights.xml" ]
+		    then
+			root -b -q 'readxml_savehist.cc+('\"${INPUTMCNAME[j]}\"','\"${INPUTDANAME[j]}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
+		    else
+			echo "  Error: no weight file: ../myTMVA/weights/${TEND}.weights.xml"
+		    fi
+		    echo
 		fi
+
+		if [ $DOREADXML_FITHIST -eq 1 ]
+		then
+		    echo -e "-- Processing \033[1;33m readxml_fithist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
+		    if [ -f "rootfiles/fmass_${TEND}.root" ]
+		    then
+			root -b -q 'readxml_fithist.cc+('\"${TEND}\"','\"${TEND}\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
+		    else
+			echo "  Error: no savehist file: rootfiles/fmass_${TEND}.root"
+		    fi
+		    echo
+		fi
+
                 cd ..
-		echo
+
 		l=$(($l+1))
             done
             i=$(($i+1))
