@@ -5,8 +5,8 @@ DOREADXML_SAVEHIST=1
 DOREADXML_FITHIST=1
 
 #
-PTMIN=(4)
-PTMAX=(10)
+PTMIN=(4 4 10 30 6)
+PTMAX=(10 20 30 1000 1000)
 DRBIN=(0 0.05 0.1 0.2 0.5)
 COLSYST=('pp')
 MVA='CutsSA'
@@ -27,6 +27,9 @@ nDR=$((${#DRBIN[@]}-1))
 nCOL=${#COLSYST[@]}
 
 #
+NC='\033[0m'
+
+#
 rt_float_to_string=-1
 float_to_string()
 {
@@ -39,7 +42,6 @@ float_to_string()
     part2=`echo $1 | awk -F "." '{print $2}'`
     rt_float_to_string=${part1:-0}p${part2:-0}
 }
-NC='\033[0m'
 
 #
 FOLDERS=("myTMVA/weights" "myTMVA/ROOT" "readxml/rootfiles" "readxml/plotfits" "readxml/plots" "readxml/results")
