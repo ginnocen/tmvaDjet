@@ -107,7 +107,7 @@ void readxml_fithist(TString inputname, TString outputname,
       effS[n] = n/100.;
       aS[n] = results[0];
       aB[n] = results[1];
-      if((aS[n]+aB[n])<=0 || n<2) aSig[n] = 0; // set some limits
+      if(aS[n]<=0 || aB[n]<=0 || n<2) aSig[n] = 0; // set some limits
       else aSig[n] = aS[n]/TMath::Sqrt(aS[n]+aB[n]);
       if(aSig[n]>maxsig)
 	{
