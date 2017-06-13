@@ -5,9 +5,10 @@ DOREADXML_SAVEHIST=1
 DOREADXML_FITHIST=1
 
 #
-PTMIN=(4 4 10 30 6)
-PTMAX=(10 20 30 1000 1000)
-DRBIN=(0 0.05 0.1 0.2 0.5)
+PTMIN=(4 20 4 10 30 6)
+PTMAX=(20 1000 10 30 1000 1000)
+DRMIN=(0.0 0.05 0.0 0.1 0.2)
+DRMAX=(0.05 0.1 0.1 0.2 0.5)
 COLSYST=('pp')
 MVA='CutsSA'
 #
@@ -23,7 +24,7 @@ INPUTDANAME=("${INPUTBNAME[0]}")
 # Do not touch the macros below if you don't know what they mean #
 ##
 nPT=$((${#PTMIN[@]}))
-nDR=$((${#DRBIN[@]}-1))
+nDR=$((${#DRMIN[@]}))
 nCOL=${#COLSYST[@]}
 
 #
@@ -71,14 +72,14 @@ then
 	    l=0
 	    while ((l<$nDR))
 	    do
-		float_to_string ${DRBIN[l]}
+		float_to_string ${DRMIN[l]}
                 tDRMIN=$rt_float_to_string
-                float_to_string ${DRBIN[l+1]}
+                float_to_string ${DRMAX[l]}
                 tDRMAX=$rt_float_to_string
 
 		cd myTMVA/
-		echo -e "-- Processing \033[1;33mTMVAClassification.C ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
-		root -l -b -q 'TMVAClassification.C+('\"${INPUTSNAME[j]}\"','\"${INPUTBNAME[j]}\"','\"${MYCUTS[j]}\"','\"${MYCUTB[j]}\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
+		echo -e "-- Processing \033[1;33mTMVAClassification.C ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRMIN[l]} - ${DRMAX[l]}${NC}"
+		root -l -b -q 'TMVAClassification.C+('\"${INPUTSNAME[j]}\"','\"${INPUTBNAME[j]}\"','\"${MYCUTS[j]}\"','\"${MYCUTB[j]}\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRMIN[l]}','${DRMAX[l]}')'
 		mv weights/TMVAClassification_${MVA[k]}.weights.xml weights/TMVA_${MVA[k]}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}.weights.xml
 		mv weights/TMVAClassification_${MVA[k]}.class.C weights/TMVA_${MVA[k]}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}.class.C
 		cd ..
@@ -108,9 +109,9 @@ then
 	    l=0
 	    while ((l<$nDR))
             do
-                float_to_string ${DRBIN[l]}
+                float_to_string ${DRMIN[l]}
                 tDRMIN=$rt_float_to_string
-                float_to_string ${DRBIN[l+1]}
+                float_to_string ${DRMAX[l]}
                 tDRMAX=$rt_float_to_string
 
                 cd readxml/
@@ -118,10 +119,10 @@ then
 
 		if [ $DOREADXML_SAVEHIST -eq 1 ]
 		then
-		    echo -e "-- Processing \033[1;33mreadxml_savehist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
+		    echo -e "-- Processing \033[1;33mreadxml_savehist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRMIN[l]} - ${DRMAX[l]}${NC}"
 		    if [ -f "../myTMVA/weights/${TEND}.weights.xml" ]
 		    then
-			root -b -q 'readxml_savehist.cc+('\"${INPUTMCNAME[j]}\"','\"${INPUTDANAME[j]}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
+			root -b -q 'readxml_savehist.cc+('\"${INPUTMCNAME[j]}\"','\"${INPUTDANAME[j]}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRMIN[l]}','${DRMAX[l]}')'
 		    else
 			echo -e "  \033[1;31mError:${NC} no weight file: ../myTMVA/weights/${TEND}.weights.xml"
 		    fi
@@ -130,10 +131,10 @@ then
 
 		if [ $DOREADXML_FITHIST -eq 1 ]
 		then
-		    echo -e "-- Processing \033[1;33mreadxml_fithist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRBIN[l]} - ${DRBIN[l+1]}${NC}"
+		    echo -e "-- Processing \033[1;33mreadxml_fithist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRMIN[l]} - ${DRMAX[l]}${NC}"
 		    if [ -f "rootfiles/fmass_${TEND}.root" ]
 		    then
-			root -b -q 'readxml_fithist.cc+('\"${TEND}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRBIN[l]}','${DRBIN[l+1]}')'
+			root -b -q 'readxml_fithist.cc+('\"${TEND}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRMIN[l]}','${DRMAX[l]}')'
 		    else
 			echo -e "  \033[1;31mError:${NC} no savehist file: rootfiles/fmass_${TEND}.root"
 		    fi
