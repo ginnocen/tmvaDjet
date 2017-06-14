@@ -194,7 +194,7 @@ void readxml_fithist(TString inputname, TString outputname,
   texD->SetTextAlign(12);
   texD->SetTextSize(0.04);
   texD->SetTextFont(42);
-  TLatex* texY = new TLatex(0.22,0.79, "|y| < 1");
+  TLatex* texY = new TLatex(0.22,0.79, "|y| < 2.0");
   texY->SetNDC();
   texY->SetTextAlign(12);
   texY->SetTextSize(0.04);

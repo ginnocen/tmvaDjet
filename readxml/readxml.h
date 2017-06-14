@@ -223,7 +223,7 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
   texdr->SetLineWidth(2);
   texdr->Draw();
 
-  TLatex* texrap = new TLatex(0.22,0.83,"|y| < 1.0");
+  TLatex* texrap = new TLatex(0.22,0.83,"|y| < 2.0");
   texrap->SetNDC();
   texrap->SetTextFont(42);
   texrap->SetTextSize(0.04);

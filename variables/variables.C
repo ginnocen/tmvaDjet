@@ -59,7 +59,7 @@ void variables(TString inputSname, TString inputBname, TString outputname,
   
   TLatex* texD = new TLatex(0.22,0.87, "D#scale[0.6]{#lower[-0.7]{0}} + #bar{D}#scale[0.6]{#lower[-0.7]{0}}");
   settex(texD,0.04,12);
-  TLatex* texY = new TLatex(0.22,0.81, "|y| < 1");
+  TLatex* texY = new TLatex(0.22,0.81, "|y| < 2.0");
   settex(texY,0.04,12);
   TLatex* texpt = new TLatex(0.92,0.85,Form("%.0f < p_{T} < %.0f GeV",ptmin,ptmax));
   settex(texpt,0.04,32);
