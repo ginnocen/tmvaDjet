@@ -22,6 +22,7 @@ class prepD
   float               PVy;
   float               PVz;
   float               PVnchi2;  
+  float               pthatweight;
 
   std::vector<int>       Dindex;
   std::vector<float>     Dmass;
@@ -81,6 +82,14 @@ class prepD
 
   std::vector<float>     DdeltaR;
 
+  int                    Gsize;
+  std::vector<int>       GpdgId;
+  std::vector<int>       GisSignal;
+  std::vector<float>     Gy;
+  std::vector<float>     Geta;
+  std::vector<float>     Gphi;
+  std::vector<float>     Gpt;
+
   // constructors
   prepD()
     {
@@ -98,6 +107,8 @@ class prepD
       PVy = -99;
       PVz = -99;
       PVnchi2 = -99;
+      Gsize = -99;
+      pthatweight = -1;
     }
   
   prepD(TTree* t) : prepD() 
@@ -108,7 +119,8 @@ class prepD
   ~prepD() {};
   
   void create_tree(TTree* t);
-  void copy_variables(djet& dt, int size);
+  void copy_variables(djet& dt, int dsize, int gsize);
+  void copy_gen_index(djet& dt, int i);
   void copy_index(djet& dt, int i, float dR);
   void clear_vectors();
 
@@ -129,6 +141,7 @@ void prepD::create_tree(TTree* t)
   t->Branch("PVy", &PVy, "PVy/F");
   t->Branch("PVz", &PVz, "PVz/F");
   t->Branch("PVnchi2", &PVnchi2, "PVnchi2/F");
+  t->Branch("pthatweight", &pthatweight, "pthatweight/F");
 
   t->Branch("Dindex", &Dindex);
   t->Branch("Dmass", &Dmass);
@@ -187,9 +200,17 @@ void prepD::create_tree(TTree* t)
   t->Branch("DgencollisionId", &DgencollisionId);
 
   t->Branch("DdeltaR", &DdeltaR);
+
+  t->Branch("Gsize", &Gsize, "Gsize/I");
+  t->Branch("GpdgId", &GpdgId);
+  t->Branch("GisSignal", &GisSignal);
+  t->Branch("Gy", &Gy);
+  t->Branch("Geta", &Geta);
+  t->Branch("Gphi", &Gphi);
+  t->Branch("Gpt", &Gpt);
 }
 
-void prepD::copy_variables(djet& dt, int size)
+void prepD::copy_variables(djet& dt, int dsize, int gsize)
 {
   isPP = dt.isPP;
   hiBin = dt.hiBin;
@@ -199,11 +220,23 @@ void prepD::copy_variables(djet& dt, int size)
   RunNo = dt.RunNo;
   EvtNo = dt.EvtNo;
   LumiNo = dt.LumiNo;
-  Dsize = size;
+  Dsize = dsize;
   PVx = dt.PVx;
   PVy = dt.PVy;
   PVz = dt.PVz;
   PVnchi2 = dt.PVnchi2;
+  Gsize = gsize;
+  pthatweight = dt.pthatweight;
+}
+
+void prepD::copy_gen_index(djet& dt, int i)
+{
+  GpdgId.push_back((*dt.GpdgId)[i]);
+  GisSignal.push_back((*dt.GisSignal)[i]);
+  Gy.push_back((*dt.Gy)[i]);
+  Geta.push_back((*dt.Geta)[i]);
+  Gphi.push_back((*dt.Gphi)[i]);
+  Gpt.push_back((*dt.Gpt)[i]);
 }
 
 void prepD::copy_index(djet& dt, int i, float dR)
@@ -326,6 +359,13 @@ void prepD::clear_vectors()
   Dgen.clear();
   DgencollisionId.clear();
   DdeltaR.clear();
+  
+  GpdgId.clear();
+  GisSignal.clear();
+  Gy.clear();
+  Geta.clear();
+  Gphi.clear();
+  Gpt.clear();
 
 }
 

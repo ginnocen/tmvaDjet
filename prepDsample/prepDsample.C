@@ -4,7 +4,7 @@ using namespace std;
 #include "includes/d_jet.C"
 #include "includes/prepD.h"
 
-Bool_t istest = false;
+Bool_t istest = true;
 void prepDsample(string inputname="", string outputname="", Float_t jetptcut=80, Float_t jetetamincut=0.3, Float_t jetetamaxcut=1.6, Int_t maxevt=-1)
 {
   if(istest)
@@ -24,16 +24,17 @@ void prepDsample(string inputname="", string outputname="", Float_t jetptcut=80,
   prepD pd(outtree);
 
   int64_t nentries = djt.fChain->GetEntriesFast();
-  nentries = (maxevt>0&&istest)?maxevt:nentries;
-  for(int i=0;i<nentries;i++)
+  int rnentries = (maxevt>0&&istest&&maxevt<=nentries)?maxevt:nentries;
+  for(int i=0;i<rnentries;i++)
     {
-      if(i%100000==0) cout<<left<<"  "<<setw(10)<<i<<" / "<<nentries<<endl;
+      if(i%100000==0) cout<<left<<"  "<<setw(10)<<i<<" / "<<rnentries<<" , "<<nentries<<endl;
       pd.clear_vectors();
       //
       djt.fChain->GetEntry(i);
       //
-      if(!(djt.Dsize>0 && djt.njet_akpu3pf)) continue;
-      int size = 0;
+      //if(!(djt.Dsize>0 && djt.njet_akpu3pf)) continue;
+
+      int dsize = 0;
       for(int jd=0;jd<djt.Dsize;jd++)
 	{
 	  for(int jj=0;jj<djt.njet_akpu3pf;jj++)
@@ -44,11 +45,19 @@ void prepDsample(string inputname="", string outputname="", Float_t jetptcut=80,
 		  Float_t deltaeta = (*djt.Deta)[jd] - (*djt.jeteta_akpu3pf)[jj];
 		  Float_t deltaR = TMath::Sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
 		  pd.copy_index(djt,jd,deltaR);
-		  size++;
+		  dsize++;
 		}
 	    }
 	}
-      pd.copy_variables(djt,size);
+
+      int gsize = 0;
+      for(int jd=0;jd<djt.Gsize;jd++)
+	{
+          pd.copy_gen_index(djt,jd);
+          gsize++;
+	}
+
+      pd.copy_variables(djt,dsize,gsize);
       outtree->Fill();
     }
 

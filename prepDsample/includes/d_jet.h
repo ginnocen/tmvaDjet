@@ -83,6 +83,7 @@ public :
    Float_t         vz;
    Float_t         weight;
    Float_t         pthat;
+   Float_t         pthatweight;
    Int_t           hiNevtPlane;
    Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
    Int_t           njet_akpu3pf;
@@ -325,6 +326,7 @@ public :
    TBranch        *b_vz;   //!
    TBranch        *b_weight;   //!
    TBranch        *b_pthat;   //!
+   TBranch        *b_pthatweight;   //!
    TBranch        *b_hiNevtPlane;   //!
    TBranch        *b_hiEvtPlanes;   //!
    TBranch        *b_njet_akpu3pf;   //!
@@ -593,9 +595,9 @@ djet::djet(std::string filename) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
 
-  TFile* f = TFile::Open(filename.c_str());
-  TTree* t = (TTree*)f->Get("djt");
-  Init(t);
+   TFile* f = TFile::Open(filename.c_str());
+   TTree* t = (TTree*)f->Get("djt");
+   Init(t);
 }
 
 djet::~djet()
@@ -848,12 +850,9 @@ void djet::Init(TTree *tree)
    Gtk2y = 0;
    Gtk2phi = 0;
 
+
    // Set branch addresses and branch pointers
-   if (!tree) 
-     {
-       cout<<"  Error: invalid tree argument"<<endl;
-       return;
-     }
+   if (!tree) return;
    fChain = tree;
    fCurrent = -1;
    fChain->SetMakeClass(1);
@@ -866,6 +865,7 @@ void djet::Init(TTree *tree)
    fChain->SetBranchAddress("vz", &vz, &b_vz);
    fChain->SetBranchAddress("weight", &weight, &b_weight);
    fChain->SetBranchAddress("pthat", &pthat, &b_pthat);
+   fChain->SetBranchAddress("pthatweight", &pthatweight, &b_pthatweight);
    fChain->SetBranchAddress("hiNevtPlane", &hiNevtPlane, &b_hiNevtPlane);
    fChain->SetBranchAddress("hiEvtPlanes", hiEvtPlanes, &b_hiEvtPlanes);
    fChain->SetBranchAddress("njet_akpu3pf", &njet_akpu3pf, &b_njet_akpu3pf);
