@@ -23,6 +23,7 @@ class prepD
   float               PVz;
   float               PVnchi2;  
   float               pthatweight;
+  float               maxDgenpt;
 
   std::vector<int>       Dindex;
   std::vector<float>     Dmass;
@@ -109,6 +110,7 @@ class prepD
       PVnchi2 = -99;
       Gsize = -99;
       pthatweight = -1;
+      maxDgenpt = -1;
     }
   
   prepD(TTree* t) : prepD() 
@@ -142,6 +144,7 @@ void prepD::create_tree(TTree* t)
   t->Branch("PVz", &PVz, "PVz/F");
   t->Branch("PVnchi2", &PVnchi2, "PVnchi2/F");
   t->Branch("pthatweight", &pthatweight, "pthatweight/F");
+  t->Branch("maxDgenpt", &maxDgenpt, "maxDgenpt/F");
 
   t->Branch("Dindex", &Dindex);
   t->Branch("Dmass", &Dmass);
@@ -227,6 +230,7 @@ void prepD::copy_variables(djet& dt, int dsize, int gsize)
   PVnchi2 = dt.PVnchi2;
   Gsize = gsize;
   pthatweight = dt.pthatweight;
+  maxDgenpt = dt.maxDgenpt;
 }
 
 void prepD::copy_gen_index(djet& dt, int i)

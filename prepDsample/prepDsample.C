@@ -4,7 +4,7 @@ using namespace std;
 #include "includes/d_jet.C"
 #include "includes/prepD.h"
 
-Bool_t istest = true;
+Bool_t istest = false;
 void prepDsample(string inputname="", string outputname="", Float_t jetptcut=80, Float_t jetetamincut=0.3, Float_t jetetamaxcut=1.6, Int_t maxevt=-1)
 {
   if(istest)
@@ -66,4 +66,18 @@ void prepDsample(string inputname="", string outputname="", Float_t jetptcut=80,
   outf->Write();
   outf->Close();
 
+}
+
+int main(int argc, char* argv[])
+{
+  if(argc==7)
+    {
+      prepDsample(argv[1], argv[2], atof(argv[3]), atof(argv[4]), atof(argv[5]), atoi(argv[6]));
+      return 0;
+    }
+  else
+    {
+      cout<<"  Error: invalid arguments number - prepDsample()"<<endl;
+      return 1;
+    }
 }
