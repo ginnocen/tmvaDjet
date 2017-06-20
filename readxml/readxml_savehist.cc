@@ -6,11 +6,9 @@ using namespace std;
 #include "../uti.h"
 
 void readxml_savehist(TString inputmcname, TString inputdataname, TString outputname,
-		      TString weightfile, TString collisionsyst, 
-		      Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax)
+                      TString weightfile, TString collisionsyst, 
+                      Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax)
 {
-  //Bool_t isPbPb = collisionsyst=="PbPb"?true:false;
-
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
   gStyle->SetEndErrorSize(0);
@@ -23,10 +21,10 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
   gStyle->SetPadBottomMargin(0.145);
   gStyle->SetTitleX(.0f);
 
-  //read weight file
+  // read weight file
   const char* filename = weightfile;
   void *doc = TMVA::gTools().xmlengine().ParseFile(filename,TMVA::gTools().xmlenginebuffersize());
-  void* rootnode = TMVA::gTools().xmlengine().DocGetRootElement(doc); // node "MethodSetup"
+  void* rootnode = TMVA::gTools().xmlengine().DocGetRootElement(doc); //node "MethodSetup"
   TString fullMethodName("");
   TMVA::gTools().ReadAttr(rootnode, "Method", fullMethodName);
 
@@ -49,7 +47,7 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
     }
 
   TObjArray *marginclass = varProp.Tokenize(" ");
-  std::vector<TString> margins;//avoid objarrays
+  std::vector<TString> margins; //avoid objarrays
   for(int i=0;i<marginclass->GetEntries();i++)
     {
       margins.push_back(((TObjString *)(marginclass->At(i)))->String());
@@ -100,13 +98,20 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
   TH1D** ahMass = new TH1D*[NEff];
   TH1D** ahMassMCSignal = new TH1D*[NEff];
   TH1D** ahMassMCSwapped = new TH1D*[NEff];
+  TH1D** ahPtEffSignal = new TH1D*[NEff];
+  TH1D** ahPtMCSignal = new TH1D*[NEff];
+  TH1D* hPtGenSignal = new TH1D("hPtGenSignal","",NFonll,MINFonll,MAXFonll);
+  TH1D* hSideband = new TH1D("hSideband","",NEff,0,1);
+
   for(n=0;n<NEff;n++)
     {
       ahMass[n] = new TH1D(Form("hMass_%d",n),"",60,1.7,2.0);
       ahMassMCSignal[n] = new TH1D(Form("hMassMCSignal_%d",n),"",60,1.7,2.0);
       ahMassMCSwapped[n] = new TH1D(Form("hMassMCSwapped_%d",n),"",60,1.7,2.0);
+      ahPtMCSignal[n] = new TH1D(Form("hPtMCSignal_%d",n),"",NFonll,MINFonll,MAXFonll);
     }
 
+  // fill histograms
   tmvaD mvaDmc;
   mvaDmc.settrkcut(2.0, 2.0, 0.3);
   mvaDmc.setDcut(2.0, 0.0, 0.2, 0.05, ptmin, ptmax, drmin, drmax);
@@ -115,7 +120,7 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
   mvaDmc.setbranchaddress(ntmc);
   Int_t nentriesmc = ntmc->GetEntries();
   cout<<endl;
-  cout<<"  Filling invariant mass histograms - MC..."<<endl;
+  cout<<"  Filling histograms - MC..."<<endl;
   for(int i=0;i<nentriesmc;i++)
     {
       ntmc->GetEntry(i);
@@ -128,9 +133,19 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
 		{
 		  if((*mvaDmc.Dgen)[j]==23333) ahMassMCSignal[n]->Fill((*mvaDmc.Dmass)[j]);
 		  if((*mvaDmc.Dgen)[j]==23344) ahMassMCSwapped[n]->Fill((*mvaDmc.Dmass)[j]);
+                  if((*mvaDmc.Dgen)[j]==23333 && (*mvaDmc.Dmass)[j]>masssignal1 && (*mvaDmc.Dmass)[j]<masssignal2) ahPtMCSignal[n]->Fill((*mvaDmc.Dpt)[j]);
 		}
 	    }
 	}
+      for(int j=0;j<mvaDmc.Gsize;j++)
+        {
+          if((TMath::Abs((*mvaDmc.GisSignal)[j])==1 || TMath::Abs((*mvaDmc.GisSignal)[j])==2) && TMath::Abs((*mvaDmc.Gy)[j])<2.0) hPtGenSignal[n]->Fill((*mvaDmc.Gpt)[j]);
+        }
+    }
+  for(n=0;n<NEff;n++)
+    {
+      ahPtEffSignal[n] = (TH1D*)ahPtMCSignal->Clone(Form("hPtEffSignal_%d",n));
+      ahPtEffSignal[n]->Divide(hPtGenSignal);
     }
 
   tmvaD mvaDdata;
@@ -141,6 +156,8 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
   mvaDdata.setbranchaddress(ntdata);
   Int_t nentriesdata = ntdata->GetEntries();
   cout<<"  Filling invariant mass histograms - data..."<<endl;
+  Int_t* ctSideband = new Int_t[NEff];
+  for(n=0;n<NEff;n++) ctSideband[n] = 0;
   for(int i=0;i<nentriesdata;i++)
     {
       ntdata->GetEntry(i);
@@ -152,9 +169,14 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
 	      if(mvaDdata.isselected(j))
 		{
 		  ahMass[n]->Fill((*mvaDdata.Dmass)[j]);
+                  if(TMath::Abs((*mvaDdata.Dmass)[j]-massD)>dmassDsidband1 && TMath::Abs((*mvaDdata.Dmass)[j]-massD)<dmassDsidband2) ctSideband[n]++;
 		}
 	    }
 	}
+    }
+  for(n=0;n<NEff;n++)
+    {
+      hSideband->SetBinContent(n+1,ctSideband[n]);      
     }
 
   TFile* outf = new TFile(Form("%s_%s.root",outputsavehist.Data(),outputname.Data()),"recreate");
@@ -164,7 +186,11 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
       ahMass[n]->Write();
       ahMassMCSignal[n]->Write();
       ahMassMCSwapped[n]->Write();
+      ahPtEffSignal[n]->Write();
+      ahPtMCSignal[n]->Write();      
     }
+  hPtGenSignal->Write();
+  hSideband->Write();  
   outf->Close();
 
 }
@@ -173,7 +199,7 @@ int main(int argc, char* argv[])
 {
   if(argc==10)
     {
-      readxml_savehist(argv[1],argv[2],argv[3],argv[4],argv[5],atof(argv[6]),atof(argv[7]),atof(argv[8]),atof(argv[9]));
+      readxml_fit_savehist(argv[1],argv[2],argv[3],argv[4],argv[5],atof(argv[6]),atof(argv[7]),atof(argv[8]),atof(argv[9]));
       return 0;
     }
   else
