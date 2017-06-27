@@ -4,22 +4,35 @@
 #include "../uti.h"
 
 const int NEff = 100;
-Double_t effS[NEff], effB[NEff], aS[NEff], aB[NEff], aSig[NEff];
+Double_t effSft[NEff], effBft[NEff], aSft[NEff], aBft[NEff], aSigft[NEff];
+Double_t effSfo[NEff], effBfo[NEff], aSfo[NEff], aBfo[NEff], aSigfo[NEff];
+const int NFonll = 4000;
+Double_t MINFonll = 0;
+Double_t MAXFonll = 1000;
+Double_t fpt[NFonll], fcentral[NFonll];
+
 TString outputsavehist = "rootfiles/fmass";
 TString outputfit = "plotfits/cmass";
-TString outputsignificance = "plots/significance";
+TString outputsignificance = "plots/csignificance";
 TString outputfitmax = "plots/cmass";
 TString outputresult = "results/significance";
+TString outputfonll = "plots/cfonll";
+
+Float_t massD = 1.8649;
+Float_t dmassDsignal = 0.045;
+Float_t dmassDsidband1 = 0.01;
+Float_t dmassDsidband2 = 0.015;
+Float_t masssignal1 = massD - dmassDsignal;
+Float_t masssignal2 = massD + dmassDsignal;
+
+Double_t BR = 0.0387;
+Double_t deltapt = 0.25;
 
 void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped, 
 	 TString outputname, Float_t* results, TString collisionsyst, 
 	 Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax,
-	 Bool_t ifsethmaximum=true)
+	 Bool_t ifsethmaximum = true)
 {
-
-  Float_t massD = 1.8649;
-  Float_t masssignal1 = massD - 0.045;
-  Float_t masssignal2 = massD + 0.045;
 
   Double_t setparam0 = 100.;
   Double_t setparam1 = 1.865;
@@ -28,6 +41,7 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
   Double_t setparam8 = 0.1;
   Double_t setparam9 = 0.1;
   Double_t fixparam1 = 1.865;
+
   Double_t minhisto = 1.7;
   Double_t maxhisto = 2.0;
   Double_t nbinsmasshisto = 60;
@@ -239,17 +253,8 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
   results[0] = mass->Integral(masssignal1,masssignal2)/binwidthmass;
   results[1] = background->Integral(masssignal1,masssignal2)/binwidthmass + massSwap->Integral(masssignal2,masssignal2)/binwidthmass;
 
-  //cout<<yield<<"  "<<results[0]<<"  "<<results[1]<<endl;
-
   delete c;
 
 }
-
-
-
-
-
-  
-
 
 #endif

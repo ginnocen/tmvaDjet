@@ -1,16 +1,22 @@
-#!/bin/bash
+#!/bin/sh
 
 DOTMVA=1
 DOREADXML_SAVEHIST=1
-DOREADXML_FITHIST=1
+DOREADXML_USEHIST=0
 
 #
-PTMIN=(4 20 4 10 30 6)
-PTMAX=(20 1000 10 30 1000 1000)
+#PTMIN=(4 20 4 10 30 6)
+#PTMAX=(20 999 10 30 999 999)
+#RAA=(1 1 1 1 1 1)
+PTMIN=(20 30 6)
+PTMAX=(999 999 999)
+RAA=(1 1 1)
 DRMIN=(0.0 0.05 0.0 0.1 0.2)
 DRMAX=(0.05 0.1 0.1 0.2 0.5)
 COLSYST=('pp')
+LUMI=(27.4)
 MVA='CutsSA'
+
 #
 INPUTSNAME=('/export/d00/scratch/jwang/Djets/MC/tmva_DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight_jetpt_80_jeteta_0p3_1p6.root')
 INPUTBNAME=('/export/d00/scratch/jwang/Djets/data/tmva_DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1_jetpt_80_jeteta_0p3_1p6.root')
@@ -31,17 +37,17 @@ nCOL=${#COLSYST[@]}
 NC='\033[0m'
 
 #
-rt_float_to_string=-1
-float_to_string()
+function float_to_string()
 {
     if [[ $# -ne 1 ]]
     then
-        echo -e "  \033[1;31mError:${NC} invalid argument number - float_to_string()"
+        echo -e "\033[1;31merror:${NC} invalid argument number - float_to_string()"
         exit 1
     fi
     part1=`echo $1 | awk -F "." '{print $1}'`
     part2=`echo $1 | awk -F "." '{print $2}'`
     rt_float_to_string=${part1:-0}p${part2:-0}
+    echo $rt_float_to_string
 }
 
 #
@@ -65,17 +71,13 @@ then
         i=0
         while ((i<$nPT))
         do
-	    float_to_string ${PTMIN[i]}
-            tPTMIN=$rt_float_to_string
-            float_to_string ${PTMAX[i]}
-            tPTMAX=$rt_float_to_string
+            tPTMIN=$(float_to_string ${PTMIN[i]})
+            tPTMAX=$(float_to_string ${PTMAX[i]})
 	    l=0
 	    while ((l<$nDR))
 	    do
-		float_to_string ${DRMIN[l]}
-                tDRMIN=$rt_float_to_string
-                float_to_string ${DRMAX[l]}
-                tDRMAX=$rt_float_to_string
+                tDRMIN=$(float_to_string ${DRMIN[l]})
+                tDRMAX=$(float_to_string ${DRMAX[l]})
 
 		cd myTMVA/
 		echo -e "-- Processing \033[1;33mTMVAClassification.C ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRMIN[l]} - ${DRMAX[l]}${NC}"
@@ -94,7 +96,7 @@ then
 fi
 
 # readxml.cc #
-if [[ $DOREADXML_SAVEHIST -eq 1 || $DOREADXML_FITHIST -eq 1 ]]
+if [[ $DOREADXML_SAVEHIST -eq 1 || $DOREADXML_USEHIST -eq 1 ]]
 then
     j=0
     while ((j<$nCOL))
@@ -102,41 +104,40 @@ then
         i=0
         while ((i<$nPT))
         do
-	    float_to_string ${PTMIN[i]}
-            tPTMIN=$rt_float_to_string
-            float_to_string ${PTMAX[i]}
-            tPTMAX=$rt_float_to_string
+            tPTMIN=$(float_to_string ${PTMIN[i]})
+            tPTMAX=$(float_to_string ${PTMAX[i]})
 	    l=0
 	    while ((l<$nDR))
             do
-                float_to_string ${DRMIN[l]}
-                tDRMIN=$rt_float_to_string
-                float_to_string ${DRMAX[l]}
-                tDRMAX=$rt_float_to_string
+                tDRMIN=$(float_to_string ${DRMIN[l]})
+                tDRMAX=$(float_to_string ${DRMAX[l]})
 
                 cd readxml/
 		TEND=TMVA_${MVA[k]}_${COLSYST[j]}_pt_${tPTMIN}_${tPTMAX}_deltaR_${tDRMIN}_${tDRMAX}
 
 		if [ $DOREADXML_SAVEHIST -eq 1 ]
 		then
+                    #g++ readxml_savehist.cc $(root-config --cflags --libs) -l TMVA -g -o readxml_savehist.exe
 		    echo -e "-- Processing \033[1;33mreadxml_savehist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRMIN[l]} - ${DRMAX[l]}${NC}"
 		    if [ -f "../myTMVA/weights/${TEND}.weights.xml" ]
 		    then
 			root -b -q 'readxml_savehist.cc+('\"${INPUTMCNAME[j]}\"','\"${INPUTDANAME[j]}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRMIN[l]}','${DRMAX[l]}')'
+			#./readxml_savehist.exe "${INPUTMCNAME[j]}" "${INPUTDANAME[j]}" "${TEND}" "../myTMVA/weights/${TEND}.weights.xml" "${COLSYST[j]}" "${PTMIN[i]}" "${PTMAX[i]}" "${DRMIN[l]}" "${DRMAX[l]}"
 		    else
-			echo -e "  \033[1;31mError:${NC} no weight file: ../myTMVA/weights/${TEND}.weights.xml"
+			echo -e "\033[1;31merror:${NC} no weight file: ../myTMVA/weights/${TEND}.weights.xml"
 		    fi
 		    echo
+                    #rm readxml_savehist.exe
 		fi
 
-		if [ $DOREADXML_FITHIST -eq 1 ]
+		if [ $DOREADXML_USEHIST -eq 1 ]
 		then
-		    echo -e "-- Processing \033[1;33mreadxml_fithist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRMIN[l]} - ${DRMAX[l]}${NC}"
+		    echo -e "-- Processing \033[1;33mreadxml_usehist.cc ${NC} pT bin: \033[1;32m${PTMIN[i]} - ${PTMAX[i]} GeV/c${NC}, deltaR range: \033[1;32m${DRMIN[l]} - ${DRMAX[l]}${NC}"
 		    if [ -f "rootfiles/fmass_${TEND}.root" ]
 		    then
-			root -b -q 'readxml_fithist.cc+('\"${TEND}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRMIN[l]}','${DRMAX[l]}')'
+			root -b -q 'readxml_usehist.cc+('\"${TEND}\"','\"${TEND}\"','\"../myTMVA/weights/${TEND}.weights.xml\"','\"${COLSYST[j]}\"','${PTMIN[i]}','${PTMAX[i]}','${DRMIN[l]}','${DRMAX[l]}','${LUMI[j]}','${RAA[i]}')'
 		    else
-			echo -e "  \033[1;31mError:${NC} no savehist file: rootfiles/fmass_${TEND}.root"
+			echo -e "\033[1;31merror:${NC} no savehist file: rootfiles/fmass_${TEND}.root"
 		    fi
 		    echo
 		fi
