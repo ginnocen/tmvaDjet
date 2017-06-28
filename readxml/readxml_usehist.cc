@@ -7,7 +7,7 @@ using namespace std;
 void readxml_usehist(TString inputname, TString outputname,
                      TString weightfile, TString collisionsyst,
                      Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax,
-                     Float_t lumi, Flaot_t raa=1)
+                     Float_t lumi, Float_t raa=1)
 {
   gStyle->SetTextSize(0.05);
   gStyle->SetTextFont(42);
@@ -120,21 +120,23 @@ void readxml_usehist(TString inputname, TString outputname,
   // fonll prediction
   ifstream getdata("fonlls/fo_Dzero_5p02TeV_y2.dat");
   if(!getdata.is_open()) cout<<"Opening the file fails"<<endl;
-  for(int i=0;i<NFonll;i++) getdata>>pt[i]>>central[i];
+  for(int i=0;i<NFonll;i++) getdata>>fpt[i]>>fcentral[i];
   TH1D* hfonll = new TH1D("hfonll",";D p_{T} (GeV/c);FONLL differential xsection",NFonll,MINFonll,MAXFonll);
   Double_t iptmin = -1, iptmax = -1;
   for(int i=0;i<NFonll;i++)
     {
-      if(pt[i]==ptmin) iptmin = i;
-      if(pt[i]==ptmax) iptmax = i;
-      hfonll->SetBinContent(i,central[i]);
+      if(fpt[i]==ptmin) iptmin = i;
+      if(fpt[i]==ptmax) iptmax = i;
+      hfonll->SetBinContent(i,fcentral[i]);
     }
   if(iptmin<0 || iptmax<0)
     {
       cout<<" Error: invalid FONLL binning"<<endl;
       return;
     }
+  cout<<"  test ipt: "<<iptmin<<"  "<<iptmax<<endl;
   TCanvas* cfonll = new TCanvas("cfonll","",600,600);
+  cfonll->SetLogy();
   hfonll->Draw();
   cfonll->SaveAs(Form("%s_%s.pdf",outputfonll.Data(),outputname.Data()));
 
@@ -146,7 +148,7 @@ void readxml_usehist(TString inputname, TString outputname,
   for(n=0;n<NEff;n++)
     {
       ahPtEffSignal[n] = (TH1D*)inf->Get(Form("hPtEffSignal_%d",n));
-      ahPtRecoSignal[n] = new TH1D(Form("hPtEffSignal_%d",n),"",NFonll,MINFonll,MAXFonll);
+      ahPtRecoSignal[n] = new TH1D(Form("hPtRecoSigna_%d",n),"",NFonll,MINFonll,MAXFonll);
       ahPtRecoSignal[n]->Multiply(hfonll,ahPtEffSignal[n],1,1,"B");
       aSfo[n] = ahPtRecoSignal[n]->Integral(iptmin+1,iptmax+1)*lumi*BR*deltapt*raa*2;//2: D0+D0bar
       aBfo[n] = hSideband->GetBinContent(n+1)*dmassDsignal/(dmassDsidband2-dmassDsidband1);
@@ -159,14 +161,6 @@ void readxml_usehist(TString inputname, TString outputname,
         }
     }
 
-  // test region
-  cout<<"  ----------------------------------------"<<endl;
-  for(n=0;m<NEff;n++)
-    {
-      cout<<" | "<<left<<setw(8)<<aSft[n]<<"| "<<setw(8)<<aSfo[n]<<"|| "<<setw(8)<<aBft[n]<<"| "<<set(8)<<aBfo[n]<<"|"<<endl;
-    }
-  cout<<"  ----------------------------------------"<<endl;
-
   // Print out opt results
   cout<<endl;
   cout<<"  ===================================================="<<endl;
@@ -178,7 +172,7 @@ void readxml_usehist(TString inputname, TString outputname,
   cout<<"  ----------------------------------------------------"<<endl;
   cout<<" | "<<setiosflags(ios::left)<<setw(9)<<"S"<<" | "<<setiosflags(ios::left)<<setw(9)<<Form("%.0f",aSft[maxindex_fit])<<" | "<<setiosflags(ios::left)<<setw(13)<<"B"<<" | "<<setiosflags(ios::left)<<setw(10)<<Form("%.0f",aBft[maxindex_fit])<<" |"<<endl;
   cout<<"  ----------------------------------------------------"<<endl;
-  cout<<" | "<<setiosflags(ios::left)<<setw(9)<<"Sig eff"<<" | "<<setiosflags(ios::left)<<setw(9)<<effS[maxindex_fit]<<" | "<<setiosflags(ios::left)<<setw(13)<<"S/sqrt(S+B)"<<" | "<<setiosflags(ios::left)<<setw(10)<<Form("%.2f",aSigft[maxindex_fit])<<" |"<<endl;
+  cout<<" | "<<setiosflags(ios::left)<<setw(9)<<"Sig eff"<<" | "<<setiosflags(ios::left)<<setw(9)<<effSft[maxindex_fit]<<" | "<<setiosflags(ios::left)<<setw(13)<<"S/sqrt(S+B)"<<" | "<<setiosflags(ios::left)<<setw(10)<<Form("%.2f",aSigft[maxindex_fit])<<" |"<<endl;
   cout<<"  ----------------------------------------------------"<<endl;
   for(unsigned int m=0;m<nVar;m++)
     {
@@ -200,7 +194,7 @@ void readxml_usehist(TString inputname, TString outputname,
   ofresult<<"  ----------------------------------------------------"<<endl;
   ofresult<<" | "<<setiosflags(ios::left)<<setw(9)<<"S"<<" | "<<setiosflags(ios::left)<<setw(9)<<Form("%.0f",aSft[maxindex_fit])<<" | "<<setiosflags(ios::left)<<setw(13)<<"B"<<" | "<<setiosflags(ios::left)<<setw(10)<<Form("%.0f",aBft[maxindex_fit])<<" |"<<endl;
   ofresult<<"  ----------------------------------------------------"<<endl;
-  ofresult<<" | "<<setiosflags(ios::left)<<setw(9)<<"Sig eff"<<" | "<<setiosflags(ios::left)<<setw(9)<<effS[maxindex_fit]<<" | "<<setiosflags(ios::left)<<setw(13)<<"S/sqrt(S+B)"<<" | "<<setiosflags(ios::left)<<setw(10)<<Form("%.2f",aSigft[maxindex_fit])<<" |"<<endl;
+  ofresult<<" | "<<setiosflags(ios::left)<<setw(9)<<"Sig eff"<<" | "<<setiosflags(ios::left)<<setw(9)<<effSft[maxindex_fit]<<" | "<<setiosflags(ios::left)<<setw(13)<<"S/sqrt(S+B)"<<" | "<<setiosflags(ios::left)<<setw(10)<<Form("%.2f",aSigft[maxindex_fit])<<" |"<<endl;
   ofresult<<"  ----------------------------------------------------"<<endl;
   for(unsigned int m=0;m<nVar;m++)
     {
@@ -211,6 +205,15 @@ void readxml_usehist(TString inputname, TString outputname,
     }
   ofresult<<"  ===================================================="<<endl;
   ofresult<<endl;
+
+  // test region
+  ofresult<<"  --------------------------------------------------------------------------------------"<<endl;
+  for(n=0;n<NEff;n++)
+    {
+      ofresult<<" | "<<left<<setw(15)<<aSft[n]<<"| "<<setw(15)<<aSfo[n]<<"| "<<setw(15)<<aSfo[n]/aSft[n]<<"||  "<<setw(15)<<aBft[n]<<"| "<<setw(15)<<aBfo[n]<<"|"<<endl;
+    }
+  ofresult<<"  --------------------------------------------------------------------------------------"<<endl;
+
   ofresult.close();
 
   // final plots
@@ -261,7 +264,7 @@ void readxml_usehist(TString inputname, TString outputname,
   texDr->SetTextSize(0.04);
   texDr->SetTextFont(42);
 
-  TGraph* gsig = new TGraph(100, effS, aSigft);
+  TGraph* gsig = new TGraph(100, effSft, aSigft);
   gsig->SetName("gsig");
   TCanvas* csig = new TCanvas("csig","",600,600);
   hempty->Draw();
@@ -280,12 +283,12 @@ int main(int argc, char* argv[])
 {
   if(argc==11)
     {
-      readxml_fit_fithist(argv[1], argv[2], argv[3], argv[4], atof(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), atof(argv[9]), atof(argv[10]));
+      readxml_usehist(argv[1], argv[2], argv[3], argv[4], atof(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), atof(argv[9]), atof(argv[10]));
       return 0;
     }
   else if(argc==10)
     {
-      readxml_fit_fithist(argv[1], argv[2], argv[3], argv[4], atof(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), atof(argv[9]));
+      readxml_usehist(argv[1], argv[2], argv[3], argv[4], atof(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), atof(argv[9]));
       return 0;
     }
   else

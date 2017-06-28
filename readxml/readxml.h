@@ -4,6 +4,7 @@
 #include "../uti.h"
 
 const int NEff = 100;
+Double_t effS[NEff], effB[NEff];
 Double_t effSft[NEff], effBft[NEff], aSft[NEff], aBft[NEff], aSigft[NEff];
 Double_t effSfo[NEff], effBfo[NEff], aSfo[NEff], aBfo[NEff], aSigfo[NEff];
 const int NFonll = 4000;
@@ -31,7 +32,7 @@ Double_t deltapt = 0.25;
 void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped, 
 	 TString outputname, Float_t* results, TString collisionsyst, 
 	 Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax,
-	 Bool_t ifsethmaximum = true)
+	 Bool_t verbose=true, Bool_t ifsethmaximum=true)
 {
 
   Double_t setparam0 = 100.;
@@ -46,6 +47,8 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
   Double_t maxhisto = 2.0;
   Double_t nbinsmasshisto = 60;
   Double_t binwidthmass = (maxhisto-minhisto)/nbinsmasshisto;
+
+  TString fitoption = verbose?"L m":"L m q";
 
   TCanvas* c = new TCanvas("c","",600,600);
 
@@ -79,7 +82,7 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
   f->ReleaseParameter(1);
   hMCSignal->Fit("f","L q","",minhisto,maxhisto);
   hMCSignal->Fit("f","L q","",minhisto,maxhisto);
-  hMCSignal->Fit("f","L m","",minhisto,maxhisto);
+  hMCSignal->Fit("f",fitoption,"",minhisto,maxhisto);
   
   f->FixParameter(1,f->GetParameter(1));
   f->FixParameter(2,f->GetParameter(2));
@@ -92,7 +95,7 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
   hMCSwapped->Fit("f","L q","",minhisto,maxhisto);
   hMCSwapped->Fit("f","L q","",minhisto,maxhisto);
   hMCSwapped->Fit("f","L q","",minhisto,maxhisto);
-  hMCSwapped->Fit("f","L m","",minhisto,maxhisto);
+  hMCSwapped->Fit("f",fitoption,"",minhisto,maxhisto);
   
   f->FixParameter(7,hMCSignal->Integral(0,1000)/(hMCSwapped->Integral(0,1000)+hMCSignal->Integral(0,1000)));
   f->FixParameter(8,f->GetParameter(8));
@@ -112,7 +115,7 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
   h->Fit("f","L q","",minhisto,maxhisto);
   h->Fit("f","L q","",minhisto,maxhisto);
   h->Fit("f","L q","",minhisto,maxhisto);
-  h->Fit("f","L m","",minhisto,maxhisto);
+  h->Fit("f",fitoption,"",minhisto,maxhisto);
   
   TF1* background = new TF1("background","[0]+[1]*x+[2]*x*x+[3]*x*x*x");
   background->SetParameter(0,f->GetParameter(3));
