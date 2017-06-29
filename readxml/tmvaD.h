@@ -23,6 +23,8 @@ class tmvaD
   int                 hiBin;
   float               vz;
   float               weight;
+  float               pthatweight;
+  float               maxDgenpt;
   float               pthat;
   int                 RunNo;
   int                 EvtNo;
@@ -91,6 +93,14 @@ class tmvaD
 
   std::vector<float>*     DdeltaR;
 
+  int                     Gsize;
+  std::vector<int>*       GpdgId;
+  std::vector<int>*       GisSignal;
+  std::vector<float>*     Gy;
+  std::vector<float>*     Geta;
+  std::vector<float>*     Gphi;
+  std::vector<float>*     Gpt;
+
   //
   tmvaD() 
     {
@@ -123,6 +133,8 @@ void tmvaD::init()
   vz = -99;
   weight = -99;
   pthat = -99;
+  pthatweight = -99;
+  maxDgenpt = -99;
   RunNo = -99;
   EvtNo = -99;
   LumiNo = -99;
@@ -131,6 +143,7 @@ void tmvaD::init()
   PVy = -99;
   PVz = -99;
   PVnchi2 = -99;
+  Gsize = -99;
 
   Dindex = 0;
   Dmass = 0;
@@ -189,6 +202,13 @@ void tmvaD::init()
   DgencollisionId = 0;
 
   DdeltaR = 0;
+
+  GpdgId = 0;
+  GisSignal = 0;
+  Gy = 0;
+  Geta = 0;
+  Gphi = 0;
+  Gpt = 0;
 }
 
 void tmvaD::setbranchaddress(TTree* nt)
@@ -199,6 +219,8 @@ void tmvaD::setbranchaddress(TTree* nt)
   nt->SetBranchAddress("vz", &vz);
   nt->SetBranchAddress("weight", &weight);
   nt->SetBranchAddress("pthat", &pthat);
+  nt->SetBranchAddress("pthatweight", &pthatweight);
+  nt->SetBranchAddress("maxDgenpt", &maxDgenpt);
   nt->SetBranchAddress("RunNo", &RunNo);
   nt->SetBranchAddress("EvtNo", &EvtNo);
   nt->SetBranchAddress("LumiNo", &LumiNo);
@@ -262,6 +284,15 @@ void tmvaD::setbranchaddress(TTree* nt)
   nt->SetBranchAddress("Dgen", &Dgen);
   nt->SetBranchAddress("DgencollisionId", &DgencollisionId);
   nt->SetBranchAddress("DdeltaR", &DdeltaR);
+
+  nt->SetBranchAddress("Gsize", &Gsize);
+  nt->SetBranchAddress("GpdgId", &GpdgId);
+  nt->SetBranchAddress("GisSignal", &GisSignal);
+  nt->SetBranchAddress("Gy", &Gy);
+  nt->SetBranchAddress("Geta", &Geta);
+  nt->SetBranchAddress("Gphi", &Gphi);
+  nt->SetBranchAddress("Gpt", &Gpt);
+
 }
 
 void tmvaD::settrkcut(float _cut_trkPt, float _cut_trkEta, float _cut_trkPtErr)
