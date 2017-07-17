@@ -1,3 +1,5 @@
+#ifndef _TMVACLASSIFICATION_H_
+#define _TMVACLASSIFICATION_H_
 
 #include <cstdlib>
 #include <iostream>
@@ -19,3 +21,4 @@
 #include "TMVAGui.C"
 #endif
 
+#endif
