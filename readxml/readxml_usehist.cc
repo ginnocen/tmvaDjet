@@ -1,8 +1,4 @@
-using namespace std;
-
 #include "readxml.h"
-#include "Tools.h"
-#include "../uti.h"
 
 void readxml_usehist(TString inputname, TString outputname,
                      TString weightfile, TString collisionsyst,
@@ -17,7 +13,7 @@ void readxml_usehist(TString inputname, TString outputname,
   gStyle->SetPadBottomMargin(0.145);
   gStyle->SetTitleX(.0f);
 
-  ofstream ofresult(Form("%s_%s.txt",outputresult.Data(),outputname.Data()),std::ofstream::out);
+  std::ofstream ofresult(Form("%s_%s.txt",outputresult.Data(),outputname.Data()),std::ofstream::out);
 
   // read weight file
   const char* filename = weightfile;
@@ -26,11 +22,11 @@ void readxml_usehist(TString inputname, TString outputname,
   TString fullMethodName("");
   TMVA::gTools().ReadAttr(rootnode, "Method", fullMethodName);
   
-  ofresult<<endl;
-  ofresult<<"  ===================================================="<<endl;
-  ofresult<<" |                Cut Opt Configuration               |"<<endl;
-  ofresult<<"  ----------------------------------------------------"<<endl;
-  ofresult<<" | "<<left<<setw(10)<<"Method"<<" | "<<setw(28)<<fullMethodName<<" | "<<setw(6)<<" "<<" |"<<endl;
+  ofresult<<std::endl;
+  ofresult<<"  ===================================================="<<std::endl;
+  ofresult<<" |                Cut Opt Configuration               |"<<std::endl;
+  ofresult<<"  ----------------------------------------------------"<<std::endl;
+  ofresult<<" | "<<std::left<<std::setw(10)<<"Method"<<" | "<<std::setw(28)<<fullMethodName<<" | "<<std::setw(6)<<" "<<" |"<<std::endl;
 
   void* opts = TMVA::gTools().GetChild(rootnode,"Options");
   void* opt = TMVA::gTools().GetChild(opts,"Option");
@@ -63,18 +59,20 @@ void readxml_usehist(TString inputname, TString outputname,
       TString varname("");
       TMVA::gTools().ReadAttr(var, "Expression", varname);
       TString tem = Form("Variable%i",k);
-      ofresult<<"  ----------------------------------------------------"<<endl;
-      ofresult<<" | "<<left<<setw(10)<<tem<<" | "<<setw(28)<<varname<<" | "<<setw(6)<<margins[k]<<" |"<<endl;
+      ofresult<<"  ----------------------------------------------------"<<std::endl;
+      ofresult<<" | "<<std::left<<std::setw(10)<<tem<<" | "<<std::setw(28)<<varname<<" | "<<std::setw(6)<<margins[k]<<" |"<<std::endl;
       var = TMVA::gTools().GetNextChild(var);
       varnames.push_back(varname);
     }
-  ofresult<<"  ===================================================="<<endl;
+  ofresult<<"  ===================================================="<<std::endl;
     
   void* weight = TMVA::gTools().GetChild(rootnode,"Weights");
   void* eff = TMVA::gTools().GetChild(weight,"Bin");
   int n=0;
   while(eff)
     {
+      TMVA::gTools().ReadAttr(eff, "effS", effS[n]);
+      TMVA::gTools().ReadAttr(eff, "effB", effB[n]);
       void* cutsnode = TMVA::gTools().GetChild(eff,"Cuts");
       for(ULong_t l=0;l<varnames.size();l++)
 	{
@@ -102,24 +100,23 @@ void readxml_usehist(TString inputname, TString outputname,
       ahMassMCSignal[n] = (TH1D*)inf->Get(Form("hMassMCSignal_%d",n));
       ahMassMCSwapped[n] = (TH1D*)inf->Get(Form("hMassMCSwapped_%d",n));
       Float_t* results = new Float_t[2];
-      fit(ahMass[n], ahMassMCSignal[n], ahMassMCSwapped[n], Form("%s_%s_%d",outputfit.Data(),outputname.Data(),n), results, collisionsyst, ptmin, ptmax, drmin, drmax);
-      effSft[n] = n/100.;
-      aSft[n] = results[0];
-      aBft[n] = results[1];
-      if(aSft[n]<=0 || aBft[n]<=0 || n<2) aSigft[n] = 0; // set some limits
-      else aSigft[n] = aSft[n]/TMath::Sqrt(aSft[n]+aBft[n]);
-      if(aSigft[n]>maxsig_fit)
+      fit(ahMass[n], ahMassMCSignal[n], ahMassMCSwapped[n], Form("%s_%s_%d",outputfit.Data(),outputname.Data(),n), results, collisionsyst, ptmin, ptmax, drmin, drmax, false);
+      aSfit[n] = results[0];
+      aBfit[n] = results[1];
+      if(aSfit[n]<=0 || aBfit[n]<=0 || n<2) aSigfit[n] = 0; // set some limits
+      else aSigfit[n] = aSfit[n]/TMath::Sqrt(aSfit[n]+aBfit[n]);
+      if(aSigfit[n]>maxsig_fit)
 	{
-	  maxsig_fit = aSigft[n];
+	  maxsig_fit = aSigfit[n];
 	  maxindex_fit = n;
 	}
     }
   Float_t* resultmax = new Float_t[2];
-  fit(ahMass[maxindex_fit], ahMassMCSignal[maxindex_fit], ahMassMCSwapped[maxindex_fit], Form("%s_%s_%d",outputfitmax.Data(),outputname.Data(),maxindex_fit), resultmax, collisionsyst, ptmin, ptmax, drmin, drmax, false);
+  fit(ahMass[maxindex_fit], ahMassMCSignal[maxindex_fit], ahMassMCSwapped[maxindex_fit], Form("%s_%s_%d",outputfitmax.Data(),outputname.Data(),maxindex_fit), resultmax, collisionsyst, ptmin, ptmax, drmin, drmax, false, false);
 
   // fonll prediction
-  ifstream getdata("fonlls/fo_Dzero_5p02TeV_y2.dat");
-  if(!getdata.is_open()) cout<<"Opening the file fails"<<endl;
+  std::ifstream getdata("fonlls/fo_Dzero_5p02TeV_y2.dat");
+  if(!getdata.is_open()) std::cout<<"Opening the file fails"<<std::endl;
   for(int i=0;i<NFonll;i++) getdata>>fpt[i]>>fcentral[i];
   TH1D* hfonll = new TH1D("hfonll",";D p_{T} (GeV/c);FONLL differential xsection",NFonll,MINFonll,MAXFonll);
   Double_t iptmin = -1, iptmax = -1;
@@ -131,10 +128,9 @@ void readxml_usehist(TString inputname, TString outputname,
     }
   if(iptmin<0 || iptmax<0)
     {
-      cout<<" Error: invalid FONLL binning"<<endl;
+      std::cout<<" Error: invalid FONLL binning"<<std::endl;
       return;
     }
-  cout<<"  test ipt: "<<iptmin<<"  "<<iptmax<<endl;
   TCanvas* cfonll = new TCanvas("cfonll","",600,600);
   cfonll->SetLogy();
   hfonll->Draw();
@@ -150,74 +146,100 @@ void readxml_usehist(TString inputname, TString outputname,
       ahPtEffSignal[n] = (TH1D*)inf->Get(Form("hPtEffSignal_%d",n));
       ahPtRecoSignal[n] = new TH1D(Form("hPtRecoSigna_%d",n),"",NFonll,MINFonll,MAXFonll);
       ahPtRecoSignal[n]->Multiply(hfonll,ahPtEffSignal[n],1,1,"B");
-      aSfo[n] = ahPtRecoSignal[n]->Integral(iptmin+1,iptmax+1)*lumi*BR*deltapt*raa*2;//2: D0+D0bar
-      aBfo[n] = hSideband->GetBinContent(n+1)*dmassDsignal/(dmassDsidband2-dmassDsidband1);
-      effSfo[n] = n/100.;
-      aSigfo[n] = aSfo[n]/TMath::Sqrt(aSfo[n]+aBfo[n]);
-      if(aSigft[n]>maxsig_fonll)
+      aSfonll[n] = ahPtRecoSignal[n]->Integral(iptmin+1,iptmax+1)*lumi*BR*deltapt*raa*2;//2: D0+D0bar
+      aBfonll[n] = hSideband->GetBinContent(n+1)*dmassDsignal/(dmassDsidband2-dmassDsidband1);
+      aSigfonll[n] = aSfonll[n]/TMath::Sqrt(aSfonll[n]+aBfonll[n]);
+      if(aSigfit[n]>maxsig_fonll)
         {
-          maxsig_fonll = aSigfo[n];
+          maxsig_fonll = aSigfonll[n];
           maxindex_fonll = n;
         }
     }
 
   // Print out opt results
-  cout<<endl;
-  cout<<"  ===================================================="<<endl;
-  cout<<" |                      Opt Result                    |"<<endl;
-  cout<<"  ----------------------------------------------------"<<endl;
-  cout<<" | "<<setiosflags(ios::left)<<setw(9)<<"pT"<<" | "<<setw(38)<<Form("%.0f - %.0f GeV/c",ptmin,ptmax)<<" |"<<endl;
-  cout<<"  ----------------------------------------------------"<<endl;
-  cout<<" | "<<setiosflags(ios::left)<<setw(9)<<"delta R"<<" | "<<setw(38)<<Form("%.2f - %.2f",drmin,drmax)<<" |"<<endl;
-  cout<<"  ----------------------------------------------------"<<endl;
-  cout<<" | "<<setiosflags(ios::left)<<setw(9)<<"S"<<" | "<<setiosflags(ios::left)<<setw(9)<<Form("%.0f",aSft[maxindex_fit])<<" | "<<setiosflags(ios::left)<<setw(13)<<"B"<<" | "<<setiosflags(ios::left)<<setw(10)<<Form("%.0f",aBft[maxindex_fit])<<" |"<<endl;
-  cout<<"  ----------------------------------------------------"<<endl;
-  cout<<" | "<<setiosflags(ios::left)<<setw(9)<<"Sig eff"<<" | "<<setiosflags(ios::left)<<setw(9)<<effSft[maxindex_fit]<<" | "<<setiosflags(ios::left)<<setw(13)<<"S/sqrt(S+B)"<<" | "<<setiosflags(ios::left)<<setw(10)<<Form("%.2f",aSigft[maxindex_fit])<<" |"<<endl;
-  cout<<"  ----------------------------------------------------"<<endl;
+  std::cout<<std::endl;
+  std::cout<<"  =========================================================="<<std::endl;
+  std::cout<<" |                         Opt Result                       |"<<std::endl;
+  std::cout<<"  ----------------------------------------------------------"<<std::endl;
+  std::cout<<" | "<<std::left<<std::setw(15)<<"pT"<<" | "<<std::setw(38)<<Form("%.0f - %.0f GeV/c",ptmin,ptmax)<<" |"<<std::endl;
+  std::cout<<"  ----------------------------------------------------------"<<std::endl;
+  std::cout<<" | "<<std::left<<std::setw(15)<<"delta R"<<" | "<<std::setw(38)<<Form("%.2f - %.2f",drmin,drmax)<<" |"<<std::endl;
+  std::cout<<"  ----------------------------------------------------------"<<std::endl;
+  std::cout<<" | "<<std::left<<std::setw(15)<<"S (fit)"<<" | "<<std::setw(9)<<Form("%.0f",aSfit[maxindex_fit])<<" | "<<std::setw(13)<<"B (fit)"<<" | "<<std::setw(10)<<Form("%.0f",aBfit[maxindex_fit])<<" |"<<std::endl;
+  std::cout<<"  ----------------------------------------------------------"<<std::endl;
+  std::cout<<" | "<<std::left<<std::setw(15)<<"effS (fit)"<<" | "<<std::setw(9)<<effS[maxindex_fit]<<" | "<<std::setw(13)<<"sig (fit)"<<" | "<<std::setw(10)<<Form("%.2f",aSigfit[maxindex_fit])<<" |"<<std::endl;
+  std::cout<<"  ----------------------------------------------------------"<<std::endl;
   for(unsigned int m=0;m<nVar;m++)
     {
-      if(m) cout<<"  ----------------------------------------------------"<<endl;
-      cout<<" | "<<setiosflags(ios::left)<<setw(29)<<varnames.at(m)<<" | "<<setiosflags(ios::left)<<setw(18)<<varmins[maxindex_fit].at(m)<<" |"<<endl;
-      cout<<"  ----------------------------------------------------"<<endl;
-      cout<<" | "<<setiosflags(ios::left)<<setw(29)<<" "<<" | "<<setiosflags(ios::left)<<setw(18)<<varmaxs[maxindex_fit].at(m)<<" |"<<endl;
+      if(m) std::cout<<"  ----------------------------------------------------------"<<std::endl;
+      std::cout<<" | "<<std::left<<std::setw(35)<<varnames.at(m)<<" | "<<std::setw(18)<<varmins[maxindex_fit].at(m)<<" |"<<std::endl;
+      std::cout<<"  ----------------------------------------------------------"<<std::endl;
+      std::cout<<" | "<<std::left<<std::setw(35)<<" "<<" | "<<std::setw(18)<<varmaxs[maxindex_fit].at(m)<<" |"<<std::endl;
     }
-  cout<<"  ===================================================="<<endl;
-  cout<<endl;
+  std::cout<<"  ----------------------------------------------------------"<<std::endl;
+  std::cout<<" | "<<std::left<<std::setw(15)<<"S (fonll)"<<" | "<<std::setw(9)<<Form("%.0f",aSfonll[maxindex_fonll])<<" | "<<std::setw(13)<<"B (fonll)"<<" | "<<std::setw(10)<<Form("%.0f",aBfonll[maxindex_fonll])<<" |"<<std::endl;
+  std::cout<<"  ----------------------------------------------------------"<<std::endl;
+  std::cout<<" | "<<std::left<<std::setw(15)<<"effS (fonll)"<<" | "<<std::setw(9)<<effS[maxindex_fonll]<<" | "<<std::setw(13)<<"sig (fonll)"<<" | "<<std::setw(10)<<Form("%.2f",aSigfonll[maxindex_fonll])<<" |"<<std::endl;
+  std::cout<<"  ----------------------------------------------------------"<<std::endl;
+  for(unsigned int m=0;m<nVar;m++)
+    {
+      if(m) std::cout<<"  ----------------------------------------------------------"<<std::endl;
+      std::cout<<" | "<<std::left<<std::setw(35)<<varnames.at(m)<<" | "<<std::setw(18)<<varmins[maxindex_fonll].at(m)<<" |"<<std::endl;
+      std::cout<<"  ----------------------------------------------------------"<<std::endl;
+      std::cout<<" | "<<std::left<<std::setw(35)<<" "<<" | "<<std::setw(18)<<varmaxs[maxindex_fonll].at(m)<<" |"<<std::endl;
+    }
+  std::cout<<"  =========================================================="<<std::endl;
+  std::cout<<std::endl;
   
-  ofresult<<endl;
-  ofresult<<"  ===================================================="<<endl;
-  ofresult<<" |                      Opt Result                    |"<<endl;
-  ofresult<<"  ----------------------------------------------------"<<endl;
-  ofresult<<" | "<<setiosflags(ios::left)<<setw(9)<<"pT"<<" | "<<setw(38)<<Form("%.0f - %.0f GeV/c",ptmin,ptmax)<<" |"<<endl;
-  ofresult<<"  ----------------------------------------------------"<<endl;
-  ofresult<<" | "<<setiosflags(ios::left)<<setw(9)<<"delta R"<<" | "<<setw(38)<<Form("%.2f - %.2f",drmin,drmax)<<" |"<<endl;
-  ofresult<<"  ----------------------------------------------------"<<endl;
-  ofresult<<" | "<<setiosflags(ios::left)<<setw(9)<<"S"<<" | "<<setiosflags(ios::left)<<setw(9)<<Form("%.0f",aSft[maxindex_fit])<<" | "<<setiosflags(ios::left)<<setw(13)<<"B"<<" | "<<setiosflags(ios::left)<<setw(10)<<Form("%.0f",aBft[maxindex_fit])<<" |"<<endl;
-  ofresult<<"  ----------------------------------------------------"<<endl;
-  ofresult<<" | "<<setiosflags(ios::left)<<setw(9)<<"Sig eff"<<" | "<<setiosflags(ios::left)<<setw(9)<<effSft[maxindex_fit]<<" | "<<setiosflags(ios::left)<<setw(13)<<"S/sqrt(S+B)"<<" | "<<setiosflags(ios::left)<<setw(10)<<Form("%.2f",aSigft[maxindex_fit])<<" |"<<endl;
-  ofresult<<"  ----------------------------------------------------"<<endl;
+  // Output opt results
+  ofresult<<std::endl;
+  ofresult<<"  =========================================================="<<std::endl;
+  ofresult<<" |                         Opt Result                       |"<<std::endl;
+  ofresult<<"  ----------------------------------------------------------"<<std::endl;
+  ofresult<<" | "<<std::left<<std::setw(15)<<"pT"<<" | "<<std::setw(38)<<Form("%.0f - %.0f GeV/c",ptmin,ptmax)<<" |"<<std::endl;
+  ofresult<<"  ----------------------------------------------------------"<<std::endl;
+  ofresult<<" | "<<std::left<<std::setw(15)<<"delta R"<<" | "<<std::setw(38)<<Form("%.2f - %.2f",drmin,drmax)<<" |"<<std::endl;
+  ofresult<<"  ----------------------------------------------------------"<<std::endl;
+  ofresult<<" | "<<std::left<<std::setw(15)<<"S (fit)"<<" | "<<std::setw(9)<<Form("%.0f",aSfit[maxindex_fit])<<" | "<<std::setw(13)<<"B (fit)"<<" | "<<std::setw(10)<<Form("%.0f",aBfit[maxindex_fit])<<" |"<<std::endl;
+  ofresult<<"  ----------------------------------------------------------"<<std::endl;
+  ofresult<<" | "<<std::left<<std::setw(15)<<"effS (fit)"<<" | "<<std::setw(9)<<effS[maxindex_fit]<<" | "<<std::setw(13)<<"sig (fit)"<<" | "<<std::setw(10)<<Form("%.2f",aSigfit[maxindex_fit])<<" |"<<std::endl;
+  ofresult<<"  ----------------------------------------------------------"<<std::endl;
   for(unsigned int m=0;m<nVar;m++)
     {
-      if(m) ofresult<<"  ----------------------------------------------------"<<endl;
-      ofresult<<" | "<<setiosflags(ios::left)<<setw(29)<<varnames.at(m)<<" | "<<setiosflags(ios::left)<<setw(18)<<varmins[maxindex_fit].at(m)<<" |"<<endl;
-      ofresult<<"  ----------------------------------------------------"<<endl;
-      ofresult<<" | "<<setiosflags(ios::left)<<setw(29)<<" "<<" | "<<setiosflags(ios::left)<<setw(18)<<varmaxs[maxindex_fit].at(m)<<" |"<<endl;
+      if(m) ofresult<<"  ----------------------------------------------------------"<<std::endl;
+      ofresult<<" | "<<std::left<<std::setw(35)<<varnames.at(m)<<" | "<<std::setw(18)<<varmins[maxindex_fit].at(m)<<" |"<<std::endl;
+      ofresult<<"  ----------------------------------------------------------"<<std::endl;
+      ofresult<<" | "<<std::left<<std::setw(35)<<" "<<" | "<<std::setw(18)<<varmaxs[maxindex_fit].at(m)<<" |"<<std::endl;
     }
-  ofresult<<"  ===================================================="<<endl;
-  ofresult<<endl;
-
+  ofresult<<"  ----------------------------------------------------------"<<std::endl;
+  ofresult<<" | "<<std::left<<std::setw(15)<<"S (fonll)"<<" | "<<std::setw(9)<<Form("%.0f",aSfonll[maxindex_fonll])<<" | "<<std::setw(13)<<"B (fonll)"<<" | "<<std::setw(10)<<Form("%.0f",aBfonll[maxindex_fonll])<<" |"<<std::endl;
+  ofresult<<"  ----------------------------------------------------------"<<std::endl;
+  ofresult<<" | "<<std::left<<std::setw(15)<<"effS (fonll)"<<" | "<<std::setw(9)<<effS[maxindex_fonll]<<" | "<<std::setw(13)<<"sig (fonll)"<<" | "<<std::setw(10)<<Form("%.2f",aSigfonll[maxindex_fonll])<<" |"<<std::endl;
+  ofresult<<"  ----------------------------------------------------------"<<std::endl;
+  for(unsigned int m=0;m<nVar;m++)
+    {
+      if(m) ofresult<<"  ----------------------------------------------------------"<<std::endl;
+      ofresult<<" | "<<std::left<<std::setw(35)<<varnames.at(m)<<" | "<<std::setw(18)<<varmins[maxindex_fonll].at(m)<<" |"<<std::endl;
+      ofresult<<"  ----------------------------------------------------------"<<std::endl;
+      ofresult<<" | "<<std::left<<std::setw(35)<<" "<<" | "<<std::setw(18)<<varmaxs[maxindex_fonll].at(m)<<" |"<<std::endl;
+    }
+  ofresult<<"  =========================================================="<<std::endl;
+  ofresult<<std::endl;
+  
   // test region
-  ofresult<<"  --------------------------------------------------------------------------------------"<<endl;
+  ofresult<<"  ======================================================================================"<<std::endl;
+  ofresult<<" |                                      Test Region                                     |"<<std::endl;
+  ofresult<<"  --------------------------------------------------------------------------------------"<<std::endl;
   for(n=0;n<NEff;n++)
     {
-      ofresult<<" | "<<left<<setw(15)<<aSft[n]<<"| "<<setw(15)<<aSfo[n]<<"| "<<setw(15)<<aSfo[n]/aSft[n]<<"||  "<<setw(15)<<aBft[n]<<"| "<<setw(15)<<aBfo[n]<<"|"<<endl;
+      ofresult<<" | "<<std::left<<std::setw(15)<<aSfit[n]<<"| "<<std::setw(15)<<aSfonll[n]<<"| "<<std::setw(15)<<aSfonll[n]/aSfit[n]<<"||  "<<std::setw(15)<<aBfit[n]<<"| "<<std::setw(15)<<aBfonll[n]<<"|"<<std::endl;
     }
-  ofresult<<"  --------------------------------------------------------------------------------------"<<endl;
+  ofresult<<"  ======================================================================================"<<std::endl;
 
   ofresult.close();
 
   // final plots
-  TH2F* hempty = new TH2F("hempty","",50,0,1.,10,0.,aSigft[maxindex_fit]*1.4);
+  TH2F* hempty = new TH2F("hempty","",50,0,1.,10,0.,aSigfit[maxindex_fit]*1.4);
   hempty->GetXaxis()->CenterTitle();
   hempty->GetYaxis()->CenterTitle();
   hempty->GetXaxis()->SetTitle("Signal efficiency");
@@ -264,8 +286,12 @@ void readxml_usehist(TString inputname, TString outputname,
   texDr->SetTextSize(0.04);
   texDr->SetTextFont(42);
 
-  TGraph* gsig = new TGraph(100, effSft, aSigft);
-  gsig->SetName("gsig");
+  TGraph* gsig_fit = new TGraph(100, effS, aSigfit);
+  gsig_fit->SetName("gsig");
+  gsig_fit->SetMarkerColor(kBlack);
+  TGraph* gsig_fonll = new TGraph(100, effS, aSigfonll);
+  gsig_fonll->SetName("gsig");
+  gsig_fonll->SetMarkerColor(kRed);
   TCanvas* csig = new TCanvas("csig","",600,600);
   hempty->Draw();
   texCms->Draw();
@@ -274,7 +300,8 @@ void readxml_usehist(TString inputname, TString outputname,
   texY->Draw();
   texPt->Draw();
   texDr->Draw();
-  gsig->Draw("same*");
+  gsig_fit->Draw("same*");
+  gsig_fonll->Draw("same*");
   csig->SaveAs(Form("%s_%s.pdf",outputsignificance.Data(),outputname.Data()));
   
 }
@@ -293,7 +320,7 @@ int main(int argc, char* argv[])
     }
   else
     {
-      cout<<"  Error: invalid argument number - readxml_usehist"<<endl;
+      std::cout<<"  Error: invalid argument number - readxml_usehist"<<std::endl;
       return 1;
     }
 }

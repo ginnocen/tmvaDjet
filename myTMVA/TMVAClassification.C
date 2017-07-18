@@ -27,10 +27,12 @@
  *                                                                                *
  **********************************************************************************/
 
-#include "TMVAClassification.h"
+#include "../includes/TMVAClassification.h"
 void TMVAClassification(TString inputSname, TString inputBname,
+			TString collisionsyst, 
 			TString mycuts, TString mycutb,
-			TString collisionsyst, Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax, 
+                        Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
+                        Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax, 
 			TString myMethodList="")
 {
   Bool_t isPbPb = collisionsyst=="PbPb"?true:false;
@@ -250,8 +252,8 @@ void TMVAClassification(TString inputSname, TString inputBname,
    //    factory->PrepareTrainingAndTestTree( mycut,
    //                                         "NSigTrain=3000:NBkgTrain=3000:NSigTest=3000:NBkgTest=3000:SplitMode=Random:!V" );
    
-   TString cuts = isPbPb?Form("(%s)&&Dpt>%f&&Dpt<%f&&DdeltaR>%f&&DdeltaR<%f&&hiBin>=0&&hiBin<=200",mycuts.Data(),ptmin,ptmax,drmin,drmax):Form("(%s)&&Dpt>%f&&Dpt<%f&&DdeltaR>%f&&DdeltaR<%f",mycuts.Data(),ptmin,ptmax,drmin,drmax);
-   TString cutb = isPbPb?Form("(%s)&&Dpt>%f&&Dpt<%f&&DdeltaR>%f&&DdeltaR<%f&&hiBin>=0&&hiBin<=200",mycutb.Data(),ptmin,ptmax,drmin,drmax):Form("(%s)&&Dpt>%f&&Dpt<%f&&DdeltaR>%f&&DdeltaR<%f",mycutb.Data(),ptmin,ptmax,drmin,drmax);
+   TString cuts = isPbPb?Form("(%s)&&Dpt>%f&&Dpt<%f&&DdeltaR>%f&&DdeltaR<%f&&DjetptCorr>%f&&fabs(Djeteta)>%f&&fabs(Djeteta)<%f&&hiBin>=0&&hiBin<=200",mycuts.Data(),ptmin,ptmax,drmin,drmax,jetptmin,jetetamin,jetetamax):Form("(%s)&&Dpt>%f&&Dpt<%f&&DdeltaR>%f&&DdeltaR<%f&&DjetptCorr>%f&&fabs(Djeteta)>%f&&fabs(Djeteta)<%f",mycuts.Data(),ptmin,ptmax,drmin,drmax,jetptmin,jetetamin,jetetamax);
+   TString cutb = isPbPb?Form("(%s)&&Dpt>%f&&Dpt<%f&&DdeltaR>%f&&DdeltaR<%f&&DjetptCorr>%f&&fabs(Djeteta)>%f&&fabs(Djeteta)<%f&&hiBin>=0&&hiBin<=200",mycutb.Data(),ptmin,ptmax,drmin,drmax,jetptmin,jetetamin,jetetamax):Form("(%s)&&Dpt>%f&&Dpt<%f&&DdeltaR>%f&&DdeltaR<%f&&DjetptCorr>%f&&fabs(Djeteta)>%f&&fabs(Djeteta)<%f",mycutb.Data(),ptmin,ptmax,drmin,drmax,jetptmin,jetetamin,jetetamax);
    
    TCut mycutS = (TCut)cuts;
    TCut mycutB = (TCut)cutb;
@@ -476,14 +478,14 @@ void TMVAClassification(TString inputSname, TString inputBname,
 
 int main(int argc, char* argv[])
 {
-  if(argc==11)
+  if(argc==14)
     {
-      TMVAClassification(argv[1],argv[2],argv[3],argv[4],argv[5],atof(argv[6]),atof(argv[7]),atof(argv[8]),atof(argv[9]),argv[10]);
+      TMVAClassification(argv[1],argv[2],argv[3],argv[4],argv[5],atof(argv[6]),atof(argv[7]),atof(argv[8]),atof(argv[9]),atof(argv[10]),atof(argv[11]),atof(argv[12]),argv[13]);
       return 0;
     }
-  else if(argc==10)
+  else if(argc==13)
     {
-      TMVAClassification(argv[1],argv[2],argv[3],argv[4],argv[5],atof(argv[6]),atof(argv[7]),atof(argv[8]),atof(argv[9]));
+      TMVAClassification(argv[1],argv[2],argv[3],argv[4],argv[5],atof(argv[6]),atof(argv[7]),atof(argv[8]),atof(argv[9]),atof(argv[10]),atof(argv[11]),atof(argv[12]));
       return 0;
     }
   else

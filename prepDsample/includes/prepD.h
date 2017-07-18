@@ -81,7 +81,12 @@ class prepD
   std::vector<float>     Dgen;
   std::vector<int>       DgencollisionId;
 
+  std::vector<float>     DjetptCorr;
+  std::vector<float>     Djeteta;
+  std::vector<float>     Djetphi;
+
   std::vector<float>     DdeltaR;
+  std::vector<float>     DdeltaRref;
 
   int                    Gsize;
   std::vector<int>       GpdgId;
@@ -123,7 +128,7 @@ class prepD
   void create_tree(TTree* t);
   void copy_variables(djet& dt, int dsize, int gsize);
   void copy_gen_index(djet& dt, int i);
-  void copy_index(djet& dt, int i, float dR);
+  void copy_index(djet& dt, int jd, int jj, float dR, float dRref);
   void clear_vectors();
 
 };
@@ -202,7 +207,12 @@ void prepD::create_tree(TTree* t)
   t->Branch("Dgen", &Dgen);
   t->Branch("DgencollisionId", &DgencollisionId);
 
+  t->Branch("DjetptCorr", &DjetptCorr);
+  t->Branch("Djeteta", &Djeteta);
+  t->Branch("Djetphi", &Djetphi);
+
   t->Branch("DdeltaR", &DdeltaR);
+  t->Branch("DdeltaRref", &DdeltaRref);
 
   t->Branch("Gsize", &Gsize, "Gsize/I");
   t->Branch("GpdgId", &GpdgId);
@@ -243,65 +253,70 @@ void prepD::copy_gen_index(djet& dt, int i)
   Gpt.push_back((*dt.Gpt)[i]);
 }
 
-void prepD::copy_index(djet& dt, int i, float dR)
+void prepD::copy_index(djet& dt, int jd, int jj, float dR, float dRref)
 {
-  Dindex.push_back((*dt.Dindex)[i]);
-  Dmass.push_back((*dt.Dmass)[i]);
-  Dpt.push_back((*dt.Dpt)[i]);
-  Deta.push_back((*dt.Deta)[i]);
-  Dphi.push_back((*dt.Dphi)[i]);
-  Dy.push_back((*dt.Dy)[i]);
-  Dchi2ndf.push_back((*dt.Dchi2ndf)[i]);
-  Dchi2cl.push_back((*dt.Dchi2cl)[i]);
-  Ddtheta.push_back((*dt.Ddtheta)[i]);
-  Dlxy.push_back((*dt.Dlxy)[i]);
-  Dalpha.push_back((*dt.Dalpha)[i]);
-  DsvpvDistance.push_back((*dt.DsvpvDistance)[i]);
-  DsvpvDisErr.push_back((*dt.DsvpvDisErr)[i]);
-  DsvpvDistance_2D.push_back((*dt.DsvpvDistance_2D)[i]);
-  DsvpvDisErr_2D.push_back((*dt.DsvpvDisErr_2D)[i]);
-  DlxyBS.push_back((*dt.DlxyBS)[i]);
-  DlxyBSErr.push_back((*dt.DlxyBSErr)[i]);
-  DMaxDoca.push_back((*dt.DMaxDoca)[i]);
-  Dtrk1Pt.push_back((*dt.Dtrk1Pt)[i]);
-  Dtrk2Pt.push_back((*dt.Dtrk2Pt)[i]);
-  Dtrk1Eta.push_back((*dt.Dtrk1Eta)[i]);
-  Dtrk2Eta.push_back((*dt.Dtrk2Eta)[i]);
-  Dtrk1Phi.push_back((*dt.Dtrk1Phi)[i]);
-  Dtrk2Phi.push_back((*dt.Dtrk2Phi)[i]);
-  Dtrk1PtErr.push_back((*dt.Dtrk1PtErr)[i]);
-  Dtrk2PtErr.push_back((*dt.Dtrk2PtErr)[i]);
-  Dtrk1Dxy.push_back((*dt.Dtrk1Dxy)[i]);
-  Dtrk2Dxy.push_back((*dt.Dtrk2Dxy)[i]);
-  Dtrk1PixelHit.push_back((*dt.Dtrk1PixelHit)[i]);
-  Dtrk2PixelHit.push_back((*dt.Dtrk2PixelHit)[i]);
-  Dtrk1StripHit.push_back((*dt.Dtrk1StripHit)[i]);
-  Dtrk2StripHit.push_back((*dt.Dtrk2StripHit)[i]);
-  Dtrk1nStripLayer.push_back((*dt.Dtrk1nStripLayer)[i]);
-  Dtrk2nStripLayer.push_back((*dt.Dtrk2nStripLayer)[i]);
-  Dtrk1nPixelLayer.push_back((*dt.Dtrk1nPixelLayer)[i]);
-  Dtrk2nPixelLayer.push_back((*dt.Dtrk2nPixelLayer)[i]);
-  Dtrk1Chi2ndf.push_back((*dt.Dtrk1Chi2ndf)[i]);
-  Dtrk2Chi2ndf.push_back((*dt.Dtrk2Chi2ndf)[i]);
-  Dtrk1MassHypo.push_back((*dt.Dtrk1MassHypo)[i]);
-  Dtrk2MassHypo.push_back((*dt.Dtrk2MassHypo)[i]);
-  Dtrk1Algo.push_back((*dt.Dtrk1Algo)[i]);
-  Dtrk2Algo.push_back((*dt.Dtrk2Algo)[i]);
-  Dtrk1originalAlgo.push_back((*dt.Dtrk1originalAlgo)[i]);
-  Dtrk2originalAlgo.push_back((*dt.Dtrk2originalAlgo)[i]);
-  Dtrk1highPurity.push_back((*dt.Dtrk1highPurity)[i]);
-  Dtrk2highPurity.push_back((*dt.Dtrk2highPurity)[i]);
-  Dtrk1EtaErr.push_back((*dt.Dtrk1EtaErr)[i]);
-  Dtrk2EtaErr.push_back((*dt.Dtrk2EtaErr)[i]);
-  Dtrk1PhiErr.push_back((*dt.Dtrk1PhiErr)[i]);
-  Dtrk2PhiErr.push_back((*dt.Dtrk2PhiErr)[i]);
-  Dtrk1Y.push_back((*dt.Dtrk1Y)[i]);
-  Dtrk2Y.push_back((*dt.Dtrk2Y)[i]);
+  Dindex.push_back((*dt.Dindex)[jd]);
+  Dmass.push_back((*dt.Dmass)[jd]);
+  Dpt.push_back((*dt.Dpt)[jd]);
+  Deta.push_back((*dt.Deta)[jd]);
+  Dphi.push_back((*dt.Dphi)[jd]);
+  Dy.push_back((*dt.Dy)[jd]);
+  Dchi2ndf.push_back((*dt.Dchi2ndf)[jd]);
+  Dchi2cl.push_back((*dt.Dchi2cl)[jd]);
+  Ddtheta.push_back((*dt.Ddtheta)[jd]);
+  Dlxy.push_back((*dt.Dlxy)[jd]);
+  Dalpha.push_back((*dt.Dalpha)[jd]);
+  DsvpvDistance.push_back((*dt.DsvpvDistance)[jd]);
+  DsvpvDisErr.push_back((*dt.DsvpvDisErr)[jd]);
+  DsvpvDistance_2D.push_back((*dt.DsvpvDistance_2D)[jd]);
+  DsvpvDisErr_2D.push_back((*dt.DsvpvDisErr_2D)[jd]);
+  DlxyBS.push_back((*dt.DlxyBS)[jd]);
+  DlxyBSErr.push_back((*dt.DlxyBSErr)[jd]);
+  DMaxDoca.push_back((*dt.DMaxDoca)[jd]);
+  Dtrk1Pt.push_back((*dt.Dtrk1Pt)[jd]);
+  Dtrk2Pt.push_back((*dt.Dtrk2Pt)[jd]);
+  Dtrk1Eta.push_back((*dt.Dtrk1Eta)[jd]);
+  Dtrk2Eta.push_back((*dt.Dtrk2Eta)[jd]);
+  Dtrk1Phi.push_back((*dt.Dtrk1Phi)[jd]);
+  Dtrk2Phi.push_back((*dt.Dtrk2Phi)[jd]);
+  Dtrk1PtErr.push_back((*dt.Dtrk1PtErr)[jd]);
+  Dtrk2PtErr.push_back((*dt.Dtrk2PtErr)[jd]);
+  Dtrk1Dxy.push_back((*dt.Dtrk1Dxy)[jd]);
+  Dtrk2Dxy.push_back((*dt.Dtrk2Dxy)[jd]);
+  Dtrk1PixelHit.push_back((*dt.Dtrk1PixelHit)[jd]);
+  Dtrk2PixelHit.push_back((*dt.Dtrk2PixelHit)[jd]);
+  Dtrk1StripHit.push_back((*dt.Dtrk1StripHit)[jd]);
+  Dtrk2StripHit.push_back((*dt.Dtrk2StripHit)[jd]);
+  Dtrk1nStripLayer.push_back((*dt.Dtrk1nStripLayer)[jd]);
+  Dtrk2nStripLayer.push_back((*dt.Dtrk2nStripLayer)[jd]);
+  Dtrk1nPixelLayer.push_back((*dt.Dtrk1nPixelLayer)[jd]);
+  Dtrk2nPixelLayer.push_back((*dt.Dtrk2nPixelLayer)[jd]);
+  Dtrk1Chi2ndf.push_back((*dt.Dtrk1Chi2ndf)[jd]);
+  Dtrk2Chi2ndf.push_back((*dt.Dtrk2Chi2ndf)[jd]);
+  Dtrk1MassHypo.push_back((*dt.Dtrk1MassHypo)[jd]);
+  Dtrk2MassHypo.push_back((*dt.Dtrk2MassHypo)[jd]);
+  Dtrk1Algo.push_back((*dt.Dtrk1Algo)[jd]);
+  Dtrk2Algo.push_back((*dt.Dtrk2Algo)[jd]);
+  Dtrk1originalAlgo.push_back((*dt.Dtrk1originalAlgo)[jd]);
+  Dtrk2originalAlgo.push_back((*dt.Dtrk2originalAlgo)[jd]);
+  Dtrk1highPurity.push_back((*dt.Dtrk1highPurity)[jd]);
+  Dtrk2highPurity.push_back((*dt.Dtrk2highPurity)[jd]);
+  Dtrk1EtaErr.push_back((*dt.Dtrk1EtaErr)[jd]);
+  Dtrk2EtaErr.push_back((*dt.Dtrk2EtaErr)[jd]);
+  Dtrk1PhiErr.push_back((*dt.Dtrk1PhiErr)[jd]);
+  Dtrk2PhiErr.push_back((*dt.Dtrk2PhiErr)[jd]);
+  Dtrk1Y.push_back((*dt.Dtrk1Y)[jd]);
+  Dtrk2Y.push_back((*dt.Dtrk2Y)[jd]);
 
-  Dgen.push_back((*dt.Dgen)[i]);
-  DgencollisionId.push_back((*dt.DgencollisionId)[i]);
+  DjetptCorr.push_back((*dt.jetptCorr_akpu3pf)[jj]);
+  Djeteta.push_back((*dt.jeteta_akpu3pf)[jj]);
+  Djetphi.push_back((*dt.jetphi_akpu3pf)[jj]);
+
+  Dgen.push_back((*dt.Dgen)[jd]);
+  DgencollisionId.push_back((*dt.DgencollisionId)[jd]);
 
   DdeltaR.push_back(dR);
+  DdeltaRref.push_back(dRref);
 }
 
 void prepD::clear_vectors()
@@ -362,7 +377,13 @@ void prepD::clear_vectors()
 
   Dgen.clear();
   DgencollisionId.clear();
+
+  DjetptCorr.clear();
+  Djeteta.clear();
+  Djetphi.clear();
+
   DdeltaR.clear();
+  DdeltaRref.clear();
   
   GpdgId.clear();
   GisSignal.clear();

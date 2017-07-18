@@ -1,7 +1,7 @@
 #ifndef _TMVAD_H
 #define _TMVAD_H
 
-#include "../uti.h"
+#include "uti.h"
 
 class tmvaD
 {
@@ -17,6 +17,9 @@ class tmvaD
   float               cut_Dpt_max;
   float               cut_DdeltaR_min;
   float               cut_DdeltaR_max;
+  float               cut_jetpt_min;
+  float               cut_jeteta_min;
+  float               cut_jeteta_max;
 
  public:
   int                 isPP;
@@ -91,7 +94,12 @@ class tmvaD
   std::vector<float>*     Dgen;
   std::vector<int>*       DgencollisionId;
 
+  std::vector<float>*     DjetptCorr;
+  std::vector<float>*     Djeteta;
+  std::vector<float>*     Djetphi;
+
   std::vector<float>*     DdeltaR;
+  std::vector<float>*     DdeltaRref;
 
   int                     Gsize;
   std::vector<int>*       GpdgId;
@@ -115,6 +123,9 @@ class tmvaD
       cut_Dpt_max = -99;
       cut_DdeltaR_min = -99;
       cut_DdeltaR_max = -99;
+      cut_jetpt_min = -99;
+      cut_jeteta_min = -99;
+      cut_jeteta_max = -99;
     }
   ~tmvaD() {};
 
@@ -122,6 +133,7 @@ class tmvaD
   void setbranchaddress(TTree* nt);
   void settrkcut(float _cut_trkPt, float _cut_trkEta, float _cut_trkPtErr);
   void setDcut(float _cut_Dy, float _cut_Dsvpv, float _cut_Dalpha, float _cut_Dchi2cl, float _cut_Dpt_min, float _cut_Dpt_max, float _cut_DdeltaR_min, float _cut_DdeltaR_max);
+  void setjetcut(float _cut_jetpt_min, float _cut_jeteta_min, float _cut_jeteta_max);
   void settmvacut(float _cut_Dalpha, float _cut_Dsvpv); // update
   bool isselected(int j);
 };
@@ -201,7 +213,12 @@ void tmvaD::init()
   Dgen = 0;
   DgencollisionId = 0;
 
+  DjetptCorr = 0;
+  Djeteta = 0;
+  Djetphi = 0;
+
   DdeltaR = 0;
+  DdeltaRref = 0;
 
   GpdgId = 0;
   GisSignal = 0;
@@ -281,9 +298,13 @@ void tmvaD::setbranchaddress(TTree* nt)
   nt->SetBranchAddress("Dtrk2PhiErr", &Dtrk2PhiErr);
   nt->SetBranchAddress("Dtrk1Y", &Dtrk1Y);
   nt->SetBranchAddress("Dtrk2Y", &Dtrk2Y);
+  nt->SetBranchAddress("DjetptCorr", &DjetptCorr);
+  nt->SetBranchAddress("Djeteta", &Djeteta);
+  nt->SetBranchAddress("Djetphi", &Djetphi);
   nt->SetBranchAddress("Dgen", &Dgen);
   nt->SetBranchAddress("DgencollisionId", &DgencollisionId);
   nt->SetBranchAddress("DdeltaR", &DdeltaR);
+  nt->SetBranchAddress("DdeltaRref", &DdeltaRref);
 
   nt->SetBranchAddress("Gsize", &Gsize);
   nt->SetBranchAddress("GpdgId", &GpdgId);
@@ -314,6 +335,13 @@ void tmvaD::setDcut(float _cut_Dy, float _cut_Dsvpv, float _cut_Dalpha, float _c
   cut_DdeltaR_max = _cut_DdeltaR_max;
 }
 
+void tmvaD::setjetcut(float _cut_jetpt_min, float _cut_jeteta_min, float _cut_jeteta_max)
+{
+  cut_jetpt_min = _cut_jetpt_min;
+  cut_jeteta_min = _cut_jeteta_min;
+  cut_jeteta_max = _cut_jeteta_max;
+}
+
 void tmvaD::settmvacut(float _cut_Dalpha, float _cut_Dsvpv)
 {
   cut_Dalpha = _cut_Dalpha;
@@ -332,7 +360,8 @@ bool tmvaD::isselected(int j)
      (*Dalpha)[j] < cut_Dalpha &&
      (*Dchi2cl)[j] >cut_Dchi2cl &&
      (*Dpt)[j] > cut_Dpt_min && (*Dpt)[j] < cut_Dpt_max &&
-     (*DdeltaR)[j] > cut_DdeltaR_min && (*DdeltaR)[j] < cut_DdeltaR_max) return true;
+     (*DdeltaR)[j] > cut_DdeltaR_min && (*DdeltaR)[j] < cut_DdeltaR_max &&
+     (*DjetptCorr)[j] > cut_jetpt_min && TMath::Abs((*Djeteta)[j]) > cut_jeteta_min && TMath::Abs((*Djeteta)[j]) < cut_jeteta_max) return true;
   else return false;
 }
 

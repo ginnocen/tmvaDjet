@@ -1,12 +1,8 @@
-using namespace std;
-
 #include "readxml.h"
-#include "tmvaD.h"
-#include "Tools.h"
-#include "../uti.h"
 
 void readxml_savehist(TString inputmcname, TString inputdataname, TString outputname,
                       TString weightfile, TString collisionsyst, 
+                      Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
                       Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax)
 {
   gStyle->SetOptTitle(0);
@@ -28,11 +24,11 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
   TString fullMethodName("");
   TMVA::gTools().ReadAttr(rootnode, "Method", fullMethodName);
 
-  cout<<endl;
-  cout<<"  ===================================================="<<endl;
-  cout<<" |                Cut Opt Configuration               |"<<endl;
-  cout<<"  ----------------------------------------------------"<<endl;
-  cout<<" | "<<left<<setw(10)<<"Method"<<" | "<<setw(28)<<fullMethodName<<" | "<<setw(6)<<" "<<" |"<<endl;
+  std::cout<<std::endl;
+  std::cout<<"  ===================================================="<<std::endl;
+  std::cout<<" |                Cut Opt Configuration               |"<<std::endl;
+  std::cout<<"  ----------------------------------------------------"<<std::endl;
+  std::cout<<" | "<<std::left<<std::setw(10)<<"Method"<<" | "<<std::setw(28)<<fullMethodName<<" | "<<std::setw(6)<<" "<<" |"<<std::endl;
 
   void *opts = TMVA::gTools().GetChild(rootnode,"Options");
   void* opt = TMVA::gTools().GetChild(opts,"Option");
@@ -46,7 +42,7 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
       opt = TMVA::gTools().GetNextChild(opt);
     }
 
-  TObjArray *marginclass = varProp.Tokenize(" ");
+  TObjArray* marginclass = varProp.Tokenize(" ");
   std::vector<TString> margins; //avoid objarrays
   for(int i=0;i<marginclass->GetEntries();i++)
     {
@@ -65,12 +61,12 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
       TString varname("");
       TMVA::gTools().ReadAttr(var, "Expression", varname);
       TString tem = Form("Variable%i",k);
-      cout<<"  ----------------------------------------------------"<<endl;
-      cout<<" | "<<left<<setw(10)<<tem<<" | "<<setw(28)<<varname<<" | "<<setw(6)<<margins[k]<<" |"<<endl;
+      std::cout<<"  ----------------------------------------------------"<<std::endl;
+      std::cout<<" | "<<std::left<<std::setw(10)<<tem<<" | "<<std::setw(28)<<varname<<" | "<<std::setw(6)<<margins[k]<<" |"<<std::endl;
       var = TMVA::gTools().GetNextChild(var);
       varnames.push_back(varname);
     }
-  cout<<"  ===================================================="<<endl;
+  std::cout<<"  ===================================================="<<std::endl;
     
   void* weight = TMVA::gTools().GetChild(rootnode,"Weights");
   void* eff = TMVA::gTools().GetChild(weight,"Bin");
@@ -115,14 +111,16 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
   tmvaD mvaDmc;
   mvaDmc.settrkcut(2.0, 2.0, 0.3);
   mvaDmc.setDcut(2.0, 0.0, 0.2, 0.05, ptmin, ptmax, drmin, drmax);
+  mvaDmc.setjetcut(jetptmin, jetetamin, jetetamax);
   TFile* inputmc = TFile::Open(inputmcname);
   TTree* ntmc = (TTree*)inputmc->Get("tmvadjt");
   mvaDmc.setbranchaddress(ntmc);
   Int_t nentriesmc = ntmc->GetEntries();
-  cout<<endl;
-  cout<<"  Filling histograms - MC..."<<endl;
+  std::cout<<std::endl;
+  std::cout<<"  Filling invariant mass histograms - MC..."<<std::endl;
   for(int i=0;i<nentriesmc;i++)
     {
+      if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<nentriesmc<<" ] "<<"\033[1;36m"<<Form("%.0f",100.*i/nentriesmc)<<"%\033[0m"<<"\r"<<std::flush;
       ntmc->GetEntry(i);
       for(int j=0;j<mvaDmc.Dsize;j++)
 	{
@@ -147,19 +145,22 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
       ahPtEffSignal[n] = (TH1D*)ahPtMCSignal[n]->Clone(Form("hPtEffSignal_%d",n));
       ahPtEffSignal[n]->Divide(hPtGenSignal);
     }
+  std::cout<<std::endl<<"  Processed "<<"\033[1;31m"<<nentriesmc<<"\033[0m event(s)."<<std::endl;
 
   tmvaD mvaDdata;
   mvaDdata.settrkcut(2.0, 2.0, 0.3);
   mvaDdata.setDcut(2.0, 0.0, 0.2, 0.05, ptmin, ptmax, drmin, drmax);
+  mvaDdata.setjetcut(jetptmin, jetetamin, jetetamax);
   TFile* inputdata = TFile::Open(inputdataname);
   TTree* ntdata = (TTree*)inputdata->Get("tmvadjt");
   mvaDdata.setbranchaddress(ntdata);
   Int_t nentriesdata = ntdata->GetEntries();
-  cout<<"  Filling invariant mass histograms - data..."<<endl;
+  std::cout<<"  Filling invariant mass histograms - data..."<<std::endl;
   Int_t* ctSideband = new Int_t[NEff];
   for(n=0;n<NEff;n++) ctSideband[n] = 0;
   for(int i=0;i<nentriesdata;i++)
     {
+      if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<nentriesdata<<" ] "<<"\033[1;36m"<<Form("%.0f",100.*i/nentriesdata)<<"%\033[0m"<<"\r"<<std::flush;
       ntdata->GetEntry(i);
       for(int j=0;j<mvaDdata.Dsize;j++)
 	{
@@ -178,6 +179,8 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
     {
       hSideband->SetBinContent(n+1,ctSideband[n]);      
     }
+  std::cout<<std::endl<<"  Processed "<<"\033[1;31m"<<nentriesdata<<"\033[0m event(s)."<<std::endl;
+  std::cout<<std::endl;
 
   // write into the output file
   TFile* outf = new TFile(Form("%s_%s.root",outputsavehist.Data(),outputname.Data()),"recreate");
@@ -198,14 +201,14 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
 
 int main(int argc, char* argv[])
 {
-  if(argc==10)
+  if(argc==13)
     {
-      readxml_savehist(argv[1], argv[2], argv[3], argv[4], argv[5], atof(argv[6]), atof(argv[7]), atof(argv[8]), atof(argv[9]));
+      readxml_savehist(argv[1], argv[2], argv[3], argv[4], argv[5], atof(argv[6]), atof(argv[7]), atof(argv[8]), atof(argv[9]), atof(argv[10]), atof(argv[11]), atof(argv[12]));
       return 0;
     }
   else
     {
-      cout<<"  Error: invalid argument number - readxml_savehist"<<endl;
+      std::cout<<"  Error: invalid argument number - readxml_savehist"<<std::endl;
       return 1;
     }
 }

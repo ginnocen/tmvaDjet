@@ -9,12 +9,15 @@ OUTPUTDIR="/export/d00/scratch/jwang/Djets/MC/"
 OUTPUTSUB="DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight"
 
 #
+ISMC=0
 JETPT=60
-JETETAMIN=0.3
-JETETAMAX=1.6
+JETETAMIN=0.0
+JETETAMAX=2.0
 MAXEVTS=-1
 
 ##
+
+# Don't modify the content below, if you don't know what they mean. #
 
 #
 g++ prepDsample.C $(root-config --cflags --libs) -g -o prepDsample.exe
@@ -44,8 +47,7 @@ OUTPUTFILENAME=${OUTPUTDIR}/tmva_${OUTPUTSUB}_jetpt_${JETPT}_jeteta_${tJETETAMIN
 
 ##
 
-#root -b -q 'prepDsample.C+('\"${INPUTFILENAME}\"','\"${OUTPUTFILENAME}\"','${JETPT}','${JETETAMIN}','${JETETAMAX}','${MAXEVTS}')'
-./prepDsample.exe ${INPUTFILENAME} ${OUTPUTFILENAME} ${JETPT} ${JETETAMIN} ${JETETAMAX} ${MAXEVTS}
+./prepDsample.exe ${INPUTFILENAME} ${OUTPUTFILENAME} ${ISMC} ${JETPT} ${JETETAMIN} ${JETETAMAX} ${MAXEVTS}
 rm prepDsample.exe
 
 ##
