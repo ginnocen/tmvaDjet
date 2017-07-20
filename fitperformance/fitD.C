@@ -2,6 +2,7 @@
 
 int fitD(TString inputmcname, TString inputdataname, TString outplotname,
          TString collisionsyst,
+         Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
          Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax)
 {
   gStyle->SetTextSize(0.05);
@@ -22,6 +23,7 @@ int fitD(TString inputmcname, TString inputdataname, TString outplotname,
   tmvaD mvaDmc;
   mvaDmc.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
   mvaDmc.setDcut(cutval_Dy, cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, ptmin, ptmax, drmin, drmax);
+  mvaDmc.setjetcut(jetptmin, jetetamin, jetetamax);
   TFile* inputmc = TFile::Open(inputmcname);
   TTree* ntmc = (TTree*)inputmc->Get("tmvadjt");
   mvaDmc.setbranchaddress(ntmc);
@@ -46,6 +48,7 @@ int fitD(TString inputmcname, TString inputdataname, TString outplotname,
   tmvaD mvaDdata; 
   mvaDdata.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
   mvaDdata.setDcut(cutval_Dy, cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, ptmin, ptmax, drmin, drmax);
+  mvaDdata.setjetcut(jetptmin, jetetamin, jetetamax);
   TFile* inputdata = TFile::Open(inputdataname);
   TTree* ntdata = (TTree*)inputdata->Get("tmvadjt");
   mvaDdata.setbranchaddress(ntdata);
@@ -67,7 +70,7 @@ int fitD(TString inputmcname, TString inputdataname, TString outplotname,
   std::cout<<std::endl;
 
   Float_t* results = new Float_t[2];
-  fit(h, hMCSignal, hMCSwapped, outplotname, results, collisionsyst, ptmin, ptmax, drmin, drmax, false);
+  fit(h, hMCSignal, hMCSwapped, outplotname, results, collisionsyst, jetptmin, jetetamin, jetetamax, ptmin, ptmax, drmin, drmax, false);
 
   return 0;
   
@@ -75,9 +78,9 @@ int fitD(TString inputmcname, TString inputdataname, TString outplotname,
 
 int main(int argc, char* argv[])
 {
-  if(argc==9)
+  if(argc==12)
     {
-      fitD(argv[1], argv[2], argv[3], argv[4], atof(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]));
+      fitD(argv[1], argv[2], argv[3], argv[4], atof(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), atof(argv[9]), atof(argv[10]), atof(argv[11]));
       return 0;
     }
   else

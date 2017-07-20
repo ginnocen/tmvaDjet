@@ -2,6 +2,7 @@
 #define _FIT_H
 
 #include "uti.h"
+#include "xjjuti.h"
 
 Float_t massD = 1.8649;
 Float_t dmassDsignal = 0.045;
@@ -11,7 +12,8 @@ Float_t masssignal1 = massD - dmassDsignal;
 Float_t masssignal2 = massD + dmassDsignal;
 
 void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped, 
-	 TString outputname, Float_t* results, TString collisionsyst, 
+	 TString outputname, Float_t* results, TString collisionsyst,
+         Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
 	 Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax,
 	 Bool_t verbose=true, Bool_t ifsethmaximum=true)
 {
@@ -208,25 +210,36 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
   texCol->SetTextFont(42);
   texCol->Draw();
 
-  TLatex* texpt = new TLatex(0.22,0.78,Form("%.1f < p_{T} < %.1f GeV/c",ptmin,ptmax));
+  TLatex* texpt = new TLatex(0.22,0.83,Form("%s < p_{T}^{D} < %s GeV/c",xjjuti::number_remove_zero(ptmin).c_str(),xjjuti::number_remove_zero(ptmax).c_str()));
   texpt->SetNDC();
   texpt->SetTextFont(42);
   texpt->SetTextSize(0.04);
   texpt->SetLineWidth(2);
   texpt->Draw();
-  TLatex* texdr = new TLatex(0.22,0.73,Form("%.2f < #DeltaR < %.2f",drmin,drmax));
-  texdr->SetNDC();
-  texdr->SetTextFont(42);
-  texdr->SetTextSize(0.04);
-  texdr->SetLineWidth(2);
-  texdr->Draw();
-
-  TLatex* texrap = new TLatex(0.22,0.83,"|y| < 2.0");
+  TLatex* texrap = new TLatex(0.22,0.78,"|y^{D}| < 2");
   texrap->SetNDC();
   texrap->SetTextFont(42);
   texrap->SetTextSize(0.04);
   texrap->SetLineWidth(2);
   texrap->Draw();
+  TLatex* texjetpt = new TLatex(0.22,0.73,Form("p_{T}^{jet} > %s GeV/c",xjjuti::number_remove_zero(jetptmin).c_str()));
+  texjetpt->SetNDC();
+  texjetpt->SetTextFont(42);
+  texjetpt->SetTextSize(0.04);
+  texjetpt->SetLineWidth(2);
+  texjetpt->Draw();
+  TLatex* texjeteta = new TLatex(0.22,0.68,Form("%s < |#eta^{jet}| < %s",xjjuti::number_remove_zero(jetetamin).c_str(),xjjuti::number_remove_zero(jetetamin).c_str()));
+  texjeteta->SetNDC();
+  texjeteta->SetTextFont(42);
+  texjeteta->SetTextSize(0.04);
+  texjeteta->SetLineWidth(2);
+  texjeteta->Draw();
+  TLatex* texdr = new TLatex(0.22,0.63,Form("%s < #DeltaR < %s",xjjuti::number_remove_zero(drmin).c_str(),xjjuti::number_remove_zero(drmax).c_str()));
+  texdr->SetNDC();
+  texdr->SetTextFont(42);
+  texdr->SetTextSize(0.04);
+  texdr->SetLineWidth(2);
+  texdr->Draw();
   
   c->SaveAs(Form("%s.pdf",outputname.Data()));
 
@@ -242,4 +255,3 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
 }
 
 #endif
-

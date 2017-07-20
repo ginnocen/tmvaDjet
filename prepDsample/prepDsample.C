@@ -17,6 +17,7 @@ void prepDsample(string inputname="", string outputname="", Int_t isMC=1, Float_
       maxevt = 100000;
     }
 
+  std::cout<<std::endl;
   djet djt(inputname);
 
   TFile* outf = new TFile(outputname.c_str(), "recreate");
