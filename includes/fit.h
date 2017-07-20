@@ -228,7 +228,7 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
   texjetpt->SetTextSize(0.04);
   texjetpt->SetLineWidth(2);
   texjetpt->Draw();
-  TLatex* texjeteta = new TLatex(0.22,0.68,Form("%s < |#eta^{jet}| < %s",xjjuti::number_remove_zero(jetetamin).c_str(),xjjuti::number_remove_zero(jetetamin).c_str()));
+  TLatex* texjeteta = new TLatex(0.22,0.68,Form("%s < |#eta^{jet}| < %s",xjjuti::number_remove_zero(jetetamin).c_str(),xjjuti::number_remove_zero(jetetamax).c_str()));
   texjeteta->SetNDC();
   texjeteta->SetTextFont(42);
   texjeteta->SetTextSize(0.04);
