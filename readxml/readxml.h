@@ -2,6 +2,8 @@
 #define _READXML_H
 
 #include "../includes/uti.h"
+#include "../includes/xjjuti.h"
+#include "../includes/cfout.h"
 #include "../includes/fit.h"
 #include "../includes/tmvaD.h"
 #include "../includes/TMVAClassification.h"

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-DOTMVA=1
+DOTMVA=0
 DOREADXML_SAVEHIST=0
-DOREADXML_USEHIST=0
+DOREADXML_USEHIST=1
 
 ##
 #
@@ -169,7 +169,7 @@ then
 		if [ -f "rootfiles/fmass_${TEND}.root" ]
 		then
                     set -x
-		    ./readxml_usehist.exe "${TEND}" "${TEND}" "../myTMVA/weights/${TEND}.weights.xml" "${COLSYST[j]}" ${PTMIN[i]} ${PTMAX[i]} ${DRMIN[l]} ${DRMAX[l]} ${LUMI[j]} ${RAA[i]}
+		    ./readxml_usehist.exe "${TEND}" "${TEND}" "../myTMVA/weights/${TEND}.weights.xml" "${COLSYST[j]}" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} ${PTMIN[i]} ${PTMAX[i]} ${DRMIN[l]} ${DRMAX[l]} ${LUMI[j]} ${RAA[i]}
                     set +x
 		else
 		    echo -e "\033[1;31merror:${NC} no savehist file: rootfiles/fmass_${TEND}.root"
