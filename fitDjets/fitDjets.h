@@ -36,6 +36,8 @@ int initcutval(TString collisionsyst, int ipt, int idr)
       std::cout<<"\033[1;31merror:\033[0m invalid \"collisionsyst\" - initcutval()"<<std::endl;
       return 1;
     }
+  if(ipt<0 || idr<0 || ipt>=nPtBins || idr>=nDrBins) return 2;
+
   int icollsyst = collsyst_list[collisionsyst];
   cutval_trkPt = cutval_list_trkPt[icollsyst][ipt][idr];
   cutval_trkEta = cutval_list_trkEta[icollsyst][ipt][idr];

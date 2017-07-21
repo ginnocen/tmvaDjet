@@ -38,8 +38,9 @@ int fitDjets(TString inputmcname, TString inputdataname, TString collisionsyst,
       for(int j=0;j<mvaDmc.Dsize;j++)
         {
           Int_t ibinpt = xjjuti::findibin(&ptBins, (*mvaDmc.Dpt)[j]);
-          Float_t ptmin = ptBins[ibinpt], ptmax = ptBins[ibinpt+1];
           Int_t ibindr = xjjuti::findibin(&drBins, (*mvaDmc.DdeltaR)[j]);
+          if(ibinpt<0 || ibindr<0) continue;
+          Float_t ptmin = ptBins[ibinpt], ptmax = ptBins[ibinpt+1];
           Float_t drmin = drBins[ibindr], drmax = drBins[ibindr+1];
           Int_t result_initcutval = initcutval(collisionsyst, ibinpt, ibindr);
           if(result_initcutval) return result_initcutval;
@@ -68,8 +69,9 @@ int fitDjets(TString inputmcname, TString inputdataname, TString collisionsyst,
       for(int j=0;j<mvaDdata.Dsize;j++)
         {
           Int_t ibinpt = xjjuti::findibin(&ptBins, (*mvaDdata.Dpt)[j]);
-          Float_t ptmin = ptBins[ibinpt], ptmax = ptBins[ibinpt+1];
           Int_t ibindr = xjjuti::findibin(&drBins, (*mvaDdata.DdeltaR)[j]);
+          if(ibinpt<0 || ibindr<0) continue;
+          Float_t ptmin = ptBins[ibinpt], ptmax = ptBins[ibinpt+1];
           Float_t drmin = drBins[ibindr], drmax = drBins[ibindr+1];
           Int_t result_initcutval = initcutval(collisionsyst, ibinpt, ibindr);
           if(result_initcutval) return result_initcutval;
