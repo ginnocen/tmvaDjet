@@ -5,16 +5,13 @@ int fitD(TString inputmcname, TString inputdataname, TString outplotname,
          Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
          Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax)
 {
-  gStyle->SetTextSize(0.05);
-  gStyle->SetTextFont(42);
-  gStyle->SetPadRightMargin(0.043);
-  gStyle->SetPadLeftMargin(0.18);
-  gStyle->SetPadTopMargin(0.1);
-  gStyle->SetPadBottomMargin(0.145);
-  gStyle->SetTitleX(.0f);
+  setgstyle();
 
-  Int_t result_initcutval = initcutval(collisionsyst);
-  if(result_initcutval!=0) return result_initcutval;
+  Int_t ibinpt = ((xjjuti::findiedge(&ptBins, ptmin)==(xjjuti::findiedge(&ptBins, ptmax)-1))?xjjuti::findiedge(&ptBins, ptmin):-1;
+  Int_t ibindr = ((xjjuti::findiedge(&drBins, drmin)==(xjjuti::findiedge(&drBins, drmax)-1))?xjjuti::findiedge(&drBins, drmin):-1;
+  if(ibinpt<0 || ibindr<0) return 1;
+  Int_t result_initcutval = initcutval(collisionsyst, ibinpt, ibindr);
+  if(result_initcutval) return result_initcutval;
 
   TH1D* h = new TH1D("h","",60,1.7,2.0);
   TH1D* hMCSignal = new TH1D("hMCSignal","",60,1.7,2.0);

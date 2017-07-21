@@ -3,10 +3,9 @@
 
 ##
 COLSYST=('pp')
-#
-JETPTMIN=40
-JETETAMIN=0
-JETETAMAX=2.0
+JETPTMIN=(40)
+JETETAMIN=(0)
+JETETAMAX=(2.0)
 #
 PTMIN=(6 4 20)
 PTMAX=(999 20 999)
@@ -14,7 +13,8 @@ PTMAX=(999 20 999)
 DRMIN=(0. 0.1 0.2)
 DRMAX=(0.1 0.2 0.5)
 #
-INPUTMCNAME=('/export/d00/scratch/jwang/Djets/MC/tmva_DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight_jetpt_40_jeteta_0p0_2p0.root')
+INPUTMCNAME=('/export/d00/scratch/jwang/Djets/MC/tmva_DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight_jetpt_40_jeteta_0p0_2p0.root'
+    '/export/d00/scratch/jwang/Djets/MC/tmva_DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight_jetpt_40_jeteta_0p0_2p0.root')
 INPUTDANAME=('/export/d00/scratch/jwang/Djets/data/tmva_DjetFiles_20170619_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614_jetpt_40_jeteta_0p0_2p0.root')
 
 # Do not touch the macros below if you don't know what they mean #
