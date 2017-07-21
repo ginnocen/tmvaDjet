@@ -6,13 +6,7 @@ void readxml_usehist(TString inputname, TString outputname,
                      Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax,
                      Float_t lumi, Float_t raa=1)
 {
-  gStyle->SetTextSize(0.05);
-  gStyle->SetTextFont(42);
-  gStyle->SetPadRightMargin(0.043);
-  gStyle->SetPadLeftMargin(0.18);
-  gStyle->SetPadTopMargin(0.1);
-  gStyle->SetPadBottomMargin(0.145);
-  gStyle->SetTitleX(.0f);
+  setgstyle();
 
   std::ofstream ofresult(Form("%s_%s.txt",outputresult.Data(),outputname.Data()),std::ofstream::out);
   cfout cfresult(std::cout, ofresult);
@@ -133,10 +127,12 @@ void readxml_usehist(TString inputname, TString outputname,
       std::cout<<" Error: invalid FONLL binning"<<std::endl;
       return;
     }
+  /*
   TCanvas* cfonll = new TCanvas("cfonll","",600,600);
   cfonll->SetLogy();
   hfonll->Draw();
   cfonll->SaveAs(Form("%s_%s.pdf",outputfonll.Data(),outputname.Data()));
+  */
 
   TH1D** ahPtEffSignal = new TH1D*[NEff];
   TH1D** ahPtRecoSignal = new TH1D*[NEff];
@@ -148,7 +144,7 @@ void readxml_usehist(TString inputname, TString outputname,
       ahPtEffSignal[n] = (TH1D*)inf->Get(Form("hPtEffSignal_%d",n));
       ahPtRecoSignal[n] = new TH1D(Form("hPtRecoSigna_%d",n),"",NFonll,MINFonll,MAXFonll);
       ahPtRecoSignal[n]->Multiply(hfonll,ahPtEffSignal[n],1,1,"B");
-      aSfonll[n] = ahPtRecoSignal[n]->Integral(iptmin+1,iptmax+1)*lumi*BR*deltapt*raa*2;//2: D0+D0bar
+      aSfonll[n] = ahPtRecoSignal[n]->Integral(iptmin+1,iptmax+1)*lumi*norm*BR*deltapt*raa*2;//2: D0+D0bar
       aBfonll[n] = hSideband->GetBinContent(n+1)*dmassDsignal/(dmassDsidband2-dmassDsidband1);
       aSigfonll[n] = aSfonll[n]/TMath::Sqrt(aSfonll[n]+aBfonll[n]);
       if(aSigfit[n]>maxsig_fonll)
@@ -206,48 +202,35 @@ void readxml_usehist(TString inputname, TString outputname,
   ofresult.close();
 
   // final plots
-  TH2F* hempty = new TH2F("hempty","",50,0,1.,10,0.,aSigfit[maxindex_fit]*1.4);
-  hempty->GetXaxis()->CenterTitle();
-  hempty->GetYaxis()->CenterTitle();
-  hempty->GetXaxis()->SetTitle("Signal efficiency");
-  hempty->GetYaxis()->SetTitle("S / #sqrt{S+B}");
-  hempty->GetXaxis()->SetTitleOffset(1.0);
-  hempty->GetYaxis()->SetTitleOffset(1.5);
-  hempty->GetXaxis()->SetTitleSize(0.05);
-  hempty->GetYaxis()->SetTitleSize(0.05);
-  hempty->GetXaxis()->SetTitleFont(42);
-  hempty->GetYaxis()->SetTitleFont(42);
-  hempty->GetXaxis()->SetLabelFont(42);
-  hempty->GetYaxis()->SetLabelFont(42);
-  hempty->GetXaxis()->SetLabelSize(0.035);
-  hempty->GetYaxis()->SetLabelSize(0.035);
-  TLatex* texCms = new TLatex(0.18,0.93, "#scale[1.25]{CMS} Preliminary");
-  texCms->SetNDC();
-  texCms->SetTextAlign(12);
-  texCms->SetTextSize(0.04);
-  texCms->SetTextFont(42);
-  TLatex* texCol = new TLatex(0.96,0.93, Form("%s #sqrt{s_{NN}} = 5.02 TeV",collisionsyst.Data()));
-  texCol->SetNDC();
-  texCol->SetTextAlign(32);
-  texCol->SetTextSize(0.04);
-  texCol->SetTextFont(42);
+  TH2F* hempty = new TH2F("hempty",";Signal efficiency;S / #sqrt{S+B}",50,0,1.,10,0.,aSigfit[maxindex_fit]*1.4);
+  sethempty(hempty);
 
   TLatex* texD = new TLatex(0.22,0.855, "D#scale[0.6]{#lower[-0.7]{0}} + #bar{D}#scale[0.6]{#lower[-0.7]{0}}");
   texD->SetNDC();
   texD->SetTextAlign(12);
   texD->SetTextSize(0.04);
   texD->SetTextFont(42);
-  TLatex* texY = new TLatex(0.22,0.79, "|y| < 2.0");
-  texY->SetNDC();
-  texY->SetTextAlign(12);
-  texY->SetTextSize(0.04);
-  texY->SetTextFont(42);
-  TLatex* texPt = new TLatex(0.92,0.84, Form("%.0f < p_{T} < %.0f GeV/c",ptmin,ptmax));
+  TLatex* texJeteta = new TLatex(0.22,0.79, Form("%s < |#eta^{jet}| < %s",xjjuti::number_remove_zero(jetetamin).c_str(),xjjuti::number_remove_zero(jetetamax).c_str()));
+  texJeteta->SetNDC();
+  texJeteta->SetTextAlign(12);
+  texJeteta->SetTextSize(0.04);
+  texJeteta->SetTextFont(42);
+  TLatex* texJetpt = new TLatex(0.22,0.725, Form("|p_{T}^{jet}| > %s",xjjuti::number_remove_zero(jetptmin).c_str()));
+  texJetpt->SetNDC();
+  texJetpt->SetTextAlign(12);
+  texJetpt->SetTextSize(0.04);
+  texJetpt->SetTextFont(42);
+  TLatex* texPt = new TLatex(0.92,0.84, Form("%s < p_{T}^{D} < %s GeV/c",xjjuti::number_remove_zero(ptmin).c_str(),xjjuti::number_remove_zero(ptmax).c_str()));
   texPt->SetNDC();
   texPt->SetTextAlign(32);
   texPt->SetTextSize(0.04);
   texPt->SetTextFont(42);
-  TLatex* texDr = new TLatex(0.92,0.79, Form("%.2f < #DeltaR < %.2f",drmin,drmax));
+  TLatex* texY = new TLatex(0.92,0.79, "|y^{D}| < 2");
+  texY->SetNDC();
+  texY->SetTextAlign(32);
+  texY->SetTextSize(0.04);
+  texY->SetTextFont(42);
+  TLatex* texDr = new TLatex(0.92,0.725, Form("%s < #DeltaR < %s",xjjuti::number_remove_zero(drmin).c_str(),xjjuti::number_remove_zero(drmax).c_str()));
   texDr->SetNDC();
   texDr->SetTextAlign(32);
   texDr->SetTextSize(0.04);
@@ -261,14 +244,15 @@ void readxml_usehist(TString inputname, TString outputname,
   gsig_fonll->SetMarkerColor(kRed);
   TCanvas* csig = new TCanvas("csig","",600,600);
   hempty->Draw();
-  texCms->Draw();
-  texCol->Draw();
+  drawCMS(collisionsyst);
   texD->Draw();
   texY->Draw();
   texPt->Draw();
   texDr->Draw();
+  texJetpt->Draw();
+  texJeteta->Draw();
   gsig_fit->Draw("same*");
-  gsig_fonll->Draw("same*");
+  //gsig_fonll->Draw("same*");
   csig->SaveAs(Form("%s_%s.pdf",outputsignificance.Data(),outputname.Data()));
   
 }

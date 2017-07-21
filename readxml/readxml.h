@@ -24,6 +24,7 @@ TString outputfitmax = "plots/cmass";
 TString outputresult = "results/significance";
 TString outputfonll = "plots/cfonll";
 
+Double_t norm = 0.557; // FF of D->D0
 Double_t BR = 0.0387;
 Double_t deltapt = 0.25;
 
