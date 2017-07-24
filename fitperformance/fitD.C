@@ -5,7 +5,7 @@ int fitD(TString inputmcname, TString inputdataname, TString outplotname,
          Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
          Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax)
 {
-  setgstyle();
+  xjjrootuti::setgstyle();
 
   Int_t ibinpt = ((xjjuti::findiedge(&ptBins, ptmin)==(xjjuti::findiedge(&ptBins, ptmax)-1))?xjjuti::findiedge(&ptBins, ptmin):-1;
   Int_t ibindr = ((xjjuti::findiedge(&drBins, drmin)==(xjjuti::findiedge(&drBins, drmax)-1))?xjjuti::findiedge(&drBins, drmin):-1;

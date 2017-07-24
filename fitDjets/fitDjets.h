@@ -1,7 +1,7 @@
 #ifndef _FITDJETS_H_
 #define _FITDJETS_H_
 
-#include "../includes/uti.h"
+#include "../includes/xjjrootuti.h"
 #include "../includes/xjjuti.h"
 #include "../includes/fit.h"
 #include "../includes/tmvaD.h"

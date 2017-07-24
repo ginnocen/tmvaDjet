@@ -1,8 +1,7 @@
 #ifndef _PREPD_H
 #define _PREPD_H
 
-using namespace std;
-#include "uti.h"
+#include <TTree.h>
 #include "d_jet.h"
 
 class prepD

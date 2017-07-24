@@ -3,7 +3,7 @@
 int fitDjets(TString inputmcname, TString inputdataname, TString collisionsyst,
              Float_t jetptmin, Float_t jetetamin, Float_t jetetamax)
 {
-  setgstyle();
+  xjjrootuti::setgstyle();
 
   if(collsyst_list.find(collisionsyst)==collsyst_list.end())
     {

@@ -5,7 +5,7 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
                       Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
                       Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax)
 {
-  setgstyle();
+  xjjrootuti::setgstyle();
 
   // read weight file
   const char* filename = weightfile;
@@ -18,7 +18,7 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
   std::cout<<"  ===================================================="<<std::endl;
   std::cout<<" |                Cut Opt Configuration               |"<<std::endl;
   std::cout<<"  ----------------------------------------------------"<<std::endl;
-  std::cout<<" | "<<std::left<<std::setw(10)<<"Method"<<" | "<<std::setw(28)<<fullMethodName<<" | "<<std::setw(6)<<" "<<" |"<<std::endl;
+  std::cout<<" | "<<std::setiosflags(std::ios::left)<<std::setw(10)<<"Method"<<" | "<<std::setw(28)<<fullMethodName<<" | "<<std::setw(6)<<" "<<" |"<<std::endl;
 
   void *opts = TMVA::gTools().GetChild(rootnode,"Options");
   void* opt = TMVA::gTools().GetChild(opts,"Option");
@@ -52,7 +52,7 @@ void readxml_savehist(TString inputmcname, TString inputdataname, TString output
       TMVA::gTools().ReadAttr(var, "Expression", varname);
       TString tem = Form("Variable%i",k);
       std::cout<<"  ----------------------------------------------------"<<std::endl;
-      std::cout<<" | "<<std::left<<std::setw(10)<<tem<<" | "<<std::setw(28)<<varname<<" | "<<std::setw(6)<<margins[k]<<" |"<<std::endl;
+      std::cout<<" | "<<std::setiosflags(std::ios::left)<<std::setw(10)<<tem<<" | "<<std::setw(28)<<varname<<" | "<<std::setw(6)<<margins[k]<<" |"<<std::endl;
       var = TMVA::gTools().GetNextChild(var);
       varnames.push_back(varname);
     }

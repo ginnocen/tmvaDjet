@@ -6,7 +6,7 @@ void readxml_usehist(TString inputname, TString outputname,
                      Float_t ptmin, Float_t ptmax, Float_t drmin, Float_t drmax,
                      Float_t lumi, Float_t raa=1)
 {
-  setgstyle();
+  xjjrootuti::setgstyle();
 
   std::ofstream ofresult(Form("%s_%s.txt",outputresult.Data(),outputname.Data()),std::ofstream::out);
   cfout cfresult(std::cout, ofresult);
@@ -22,7 +22,7 @@ void readxml_usehist(TString inputname, TString outputname,
   cfresult<<"  ===================================================="<<std::endl;
   cfresult<<" |                Cut Opt Configuration               |"<<std::endl;
   cfresult<<"  ----------------------------------------------------"<<std::endl;
-  cfresult<<" | "<<std::left<<std::setw(10)<<"Method"<<" | "<<std::setw(28)<<fullMethodName<<" | "<<std::setw(6)<<" "<<" |"<<std::endl;
+  cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(10)<<"Method"<<" | "<<std::setw(28)<<fullMethodName<<" | "<<std::setw(6)<<" "<<" |"<<std::endl;
 
   void* opts = TMVA::gTools().GetChild(rootnode,"Options");
   void* opt = TMVA::gTools().GetChild(opts,"Option");
@@ -56,7 +56,7 @@ void readxml_usehist(TString inputname, TString outputname,
       TMVA::gTools().ReadAttr(var, "Expression", varname);
       TString tem = Form("Variable%i",k);
       cfresult<<"  ----------------------------------------------------"<<std::endl;
-      cfresult<<" | "<<std::left<<std::setw(10)<<tem<<" | "<<std::setw(28)<<varname<<" | "<<std::setw(6)<<margins[k]<<" |"<<std::endl;
+      cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(10)<<tem<<" | "<<std::setw(28)<<varname<<" | "<<std::setw(6)<<margins[k]<<" |"<<std::endl;
       var = TMVA::gTools().GetNextChild(var);
       varnames.push_back(varname);
     }
@@ -159,82 +159,65 @@ void readxml_usehist(TString inputname, TString outputname,
   cfresult<<"  =========================================================="<<std::endl;
   cfresult<<" |                         Opt Result                       |"<<std::endl;
   cfresult<<"  ----------------------------------------------------------"<<std::endl;
-  cfresult<<" | "<<std::left<<std::setw(15)<<"pT"<<" | "<<std::setw(38)<<Form("%.0f - %.0f GeV/c",ptmin,ptmax)<<" |"<<std::endl;
+  cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(15)<<"pT"<<" | "<<std::setw(38)<<Form("%.0f - %.0f GeV/c",ptmin,ptmax)<<" |"<<std::endl;
   cfresult<<"  ----------------------------------------------------------"<<std::endl;
-  cfresult<<" | "<<std::left<<std::setw(15)<<"delta R"<<" | "<<std::setw(38)<<Form("%.2f - %.2f",drmin,drmax)<<" |"<<std::endl;
+  cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(15)<<"delta R"<<" | "<<std::setw(38)<<Form("%.2f - %.2f",drmin,drmax)<<" |"<<std::endl;
   cfresult<<"  ----------------------------------------------------------"<<std::endl;
-  cfresult<<" | "<<std::left<<std::setw(15)<<"S (fit)"<<" | "<<std::setw(9)<<Form("%.0f",aSfit[maxindex_fit])<<" | "<<std::setw(13)<<"B (fit)"<<" | "<<std::setw(10)<<Form("%.0f",aBfit[maxindex_fit])<<" |"<<std::endl;
+  cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(15)<<"S (fit)"<<" | "<<std::setw(9)<<Form("%.0f",aSfit[maxindex_fit])<<" | "<<std::setw(13)<<"B (fit)"<<" | "<<std::setw(10)<<Form("%.0f",aBfit[maxindex_fit])<<" |"<<std::endl;
   cfresult<<"  ----------------------------------------------------------"<<std::endl;
-  cfresult<<" | "<<std::left<<std::setw(15)<<"effS (fit)"<<" | "<<std::setw(9)<<effS[maxindex_fit]<<" | "<<std::setw(13)<<"sig (fit)"<<" | "<<std::setw(10)<<Form("%.2f",aSigfit[maxindex_fit])<<" |"<<std::endl;
+  cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(15)<<"effS (fit)"<<" | "<<std::setw(9)<<effS[maxindex_fit]<<" | "<<std::setw(13)<<"sig (fit)"<<" | "<<std::setw(10)<<Form("%.2f",aSigfit[maxindex_fit])<<" |"<<std::endl;
   cfresult<<"  ----------------------------------------------------------"<<std::endl;
   for(unsigned int m=0;m<nVar;m++)
     {
       if(m) cfresult<<"  ----------------------------------------------------------"<<std::endl;
-      cfresult<<" | "<<std::left<<std::setw(35)<<varnames.at(m)<<" | "<<std::setw(18)<<varmins[maxindex_fit].at(m)<<" |"<<std::endl;
+      cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(35)<<varnames.at(m)<<" | "<<std::setw(18)<<varmins[maxindex_fit].at(m)<<" |"<<std::endl;
       cfresult<<"  ----------------------------------------------------------"<<std::endl;
-      cfresult<<" | "<<std::left<<std::setw(35)<<" "<<" | "<<std::setw(18)<<varmaxs[maxindex_fit].at(m)<<" |"<<std::endl;
+      cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(35)<<" "<<" | "<<std::setw(18)<<varmaxs[maxindex_fit].at(m)<<" |"<<std::endl;
     }
   cfresult<<"  ----------------------------------------------------------"<<std::endl;
-  cfresult<<" | "<<std::left<<std::setw(15)<<"S (fonll)"<<" | "<<std::setw(9)<<Form("%.0f",aSfonll[maxindex_fonll])<<" | "<<std::setw(13)<<"B (fonll)"<<" | "<<std::setw(10)<<Form("%.0f",aBfonll[maxindex_fonll])<<" |"<<std::endl;
+  cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(15)<<"S (fonll)"<<" | "<<std::setw(9)<<Form("%.0f",aSfonll[maxindex_fonll])<<" | "<<std::setw(13)<<"B (fonll)"<<" | "<<std::setw(10)<<Form("%.0f",aBfonll[maxindex_fonll])<<" |"<<std::endl;
   cfresult<<"  ----------------------------------------------------------"<<std::endl;
-  cfresult<<" | "<<std::left<<std::setw(15)<<"effS (fonll)"<<" | "<<std::setw(9)<<effS[maxindex_fonll]<<" | "<<std::setw(13)<<"sig (fonll)"<<" | "<<std::setw(10)<<Form("%.2f",aSigfonll[maxindex_fonll])<<" |"<<std::endl;
+  cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(15)<<"effS (fonll)"<<" | "<<std::setw(9)<<effS[maxindex_fonll]<<" | "<<std::setw(13)<<"sig (fonll)"<<" | "<<std::setw(10)<<Form("%.2f",aSigfonll[maxindex_fonll])<<" |"<<std::endl;
   cfresult<<"  ----------------------------------------------------------"<<std::endl;
   for(unsigned int m=0;m<nVar;m++)
     {
       if(m) cfresult<<"  ----------------------------------------------------------"<<std::endl;
-      cfresult<<" | "<<std::left<<std::setw(35)<<varnames.at(m)<<" | "<<std::setw(18)<<varmins[maxindex_fonll].at(m)<<" |"<<std::endl;
+      cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(35)<<varnames.at(m)<<" | "<<std::setw(18)<<varmins[maxindex_fonll].at(m)<<" |"<<std::endl;
       cfresult<<"  ----------------------------------------------------------"<<std::endl;
-      cfresult<<" | "<<std::left<<std::setw(35)<<" "<<" | "<<std::setw(18)<<varmaxs[maxindex_fonll].at(m)<<" |"<<std::endl;
+      cfresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(35)<<" "<<" | "<<std::setw(18)<<varmaxs[maxindex_fonll].at(m)<<" |"<<std::endl;
     }
   cfresult<<"  =========================================================="<<std::endl;
   cfresult<<std::endl;
   
   // test region
-  ofresult<<"  ======================================================================================"<<std::endl;
-  ofresult<<" |                                      Test Region                                     |"<<std::endl;
-  ofresult<<"  --------------------------------------------------------------------------------------"<<std::endl;
+  ofresult<<"  ======================================================================================================="<<std::endl;
+  ofresult<<" |                                              Test Region                                              |"<<std::endl;
+  ofresult<<"  -------------------------------------------------------------------------------------------------------"<<std::endl;
+  ofresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(15)<<"aSfit"<<"| "<<std::setw(15)<<"aSfonll"<<"| "<<std::setw(15)<<"aSfonll/aSfit"<<"||  "<<std::setw(15)<<"aBfit"<<"| "<<std::setw(15)<<"aBfonll"<<"| "<<std::setw(15)<<"aBfonll/aBfit"<<"|"<<std::endl;
   for(n=0;n<NEff;n++)
     {
-      ofresult<<" | "<<std::left<<std::setw(15)<<aSfit[n]<<"| "<<std::setw(15)<<aSfonll[n]<<"| "<<std::setw(15)<<aSfonll[n]/aSfit[n]<<"||  "<<std::setw(15)<<aBfit[n]<<"| "<<std::setw(15)<<aBfonll[n]<<"|"<<std::endl;
+      ofresult<<" | "<<std::setiosflags(std::ios::left)<<std::setw(15)<<aSfit[n]<<"| "<<std::setw(15)<<aSfonll[n]<<"| "<<std::setw(15)<<aSfonll[n]/aSfit[n]<<"||  "<<std::setw(15)<<aBfit[n]<<"| "<<std::setw(15)<<aBfonll[n]<<"| "<<std::setw(15)<<aBfonll[n]/aBfit[n]<<"|"<<std::endl;
     }
-  ofresult<<"  ======================================================================================"<<std::endl;
+  ofresult<<"  ======================================================================================================="<<std::endl;
 
   ofresult.close();
 
   // final plots
   TH2F* hempty = new TH2F("hempty",";Signal efficiency;S / #sqrt{S+B}",50,0,1.,10,0.,aSigfit[maxindex_fit]*1.4);
-  sethempty(hempty);
+  xjjrootuti::sethempty(hempty);
 
   TLatex* texD = new TLatex(0.22,0.855, "D#scale[0.6]{#lower[-0.7]{0}} + #bar{D}#scale[0.6]{#lower[-0.7]{0}}");
-  texD->SetNDC();
-  texD->SetTextAlign(12);
-  texD->SetTextSize(0.04);
-  texD->SetTextFont(42);
+  xjjrootuti::settex(texD, 0.04, 12);
   TLatex* texJeteta = new TLatex(0.22,0.79, Form("%s < |#eta^{jet}| < %s",xjjuti::number_remove_zero(jetetamin).c_str(),xjjuti::number_remove_zero(jetetamax).c_str()));
-  texJeteta->SetNDC();
-  texJeteta->SetTextAlign(12);
-  texJeteta->SetTextSize(0.04);
-  texJeteta->SetTextFont(42);
-  TLatex* texJetpt = new TLatex(0.22,0.725, Form("|p_{T}^{jet}| > %s",xjjuti::number_remove_zero(jetptmin).c_str()));
-  texJetpt->SetNDC();
-  texJetpt->SetTextAlign(12);
-  texJetpt->SetTextSize(0.04);
-  texJetpt->SetTextFont(42);
+  xjjrootuti::settex(texJeteta, 0.04, 12);
+  TLatex* texJetpt = new TLatex(0.22,0.725, Form("|p_{T}^{jet}| > %s",xjjuti::number_remove_zero(jetptmin).c_str()))
+  xjjrootuti::settex(texJetpt, 0.04, 12);  
   TLatex* texPt = new TLatex(0.92,0.84, Form("%s < p_{T}^{D} < %s GeV/c",xjjuti::number_remove_zero(ptmin).c_str(),xjjuti::number_remove_zero(ptmax).c_str()));
-  texPt->SetNDC();
-  texPt->SetTextAlign(32);
-  texPt->SetTextSize(0.04);
-  texPt->SetTextFont(42);
+  xjjrootuti::settex(texPt, 0.04, 32);
   TLatex* texY = new TLatex(0.92,0.79, "|y^{D}| < 2");
-  texY->SetNDC();
-  texY->SetTextAlign(32);
-  texY->SetTextSize(0.04);
-  texY->SetTextFont(42);
+  xjjrootuti::settex(texY, 0.04, 32);
   TLatex* texDr = new TLatex(0.92,0.725, Form("%s < #DeltaR < %s",xjjuti::number_remove_zero(drmin).c_str(),xjjuti::number_remove_zero(drmax).c_str()));
-  texDr->SetNDC();
-  texDr->SetTextAlign(32);
-  texDr->SetTextSize(0.04);
-  texDr->SetTextFont(42);
+  xjjrootuti::settex(texDr, 0.04, 32);
 
   TGraph* gsig_fit = new TGraph(NEff, effS, aSigfit);
   gsig_fit->SetName("gsig");
@@ -244,7 +227,7 @@ void readxml_usehist(TString inputname, TString outputname,
   gsig_fonll->SetMarkerColor(kRed);
   TCanvas* csig = new TCanvas("csig","",600,600);
   hempty->Draw();
-  drawCMS(collisionsyst);
+  xjjrootuti::drawCMS(collisionsyst);
   texD->Draw();
   texY->Draw();
   texPt->Draw();
