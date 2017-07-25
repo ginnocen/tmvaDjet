@@ -27,7 +27,7 @@
  *                                                                                *
  **********************************************************************************/
 
-#include "../includes/TMVAClassification.h"
+#include "TMVAClassification.h"
 void TMVAClassification(TString inputSname, TString inputBname,
 			TString collisionsyst, 
 			TString mycuts, TString mycutb,

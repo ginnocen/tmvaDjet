@@ -1,7 +1,7 @@
 #ifndef _FIT_H
 #define _FIT_H
 
-#include "uti.h"
+#include "rootheaders.h"
 #include "xjjuti.h"
 
 Float_t massD = 1.8649;
@@ -216,25 +216,25 @@ void fit(TH1D* h, TH1D* hMCSignal, TH1D* hMCSwapped,
   texpt->SetTextSize(0.04);
   texpt->SetLineWidth(2);
   texpt->Draw();
-  TLatex* texrap = new TLatex(0.22,0.78,"|y^{D}| < 2");
+  TLatex* texrap = new TLatex(0.22,0.77,"|y^{D}| < 2");
   texrap->SetNDC();
   texrap->SetTextFont(42);
   texrap->SetTextSize(0.04);
   texrap->SetLineWidth(2);
   texrap->Draw();
-  TLatex* texjetpt = new TLatex(0.22,0.73,Form("p_{T}^{jet} > %s GeV/c",xjjuti::number_remove_zero(jetptmin).c_str()));
+  TLatex* texjetpt = new TLatex(0.22,0.71,Form("p_{T}^{jet} > %s GeV/c",xjjuti::number_remove_zero(jetptmin).c_str()));
   texjetpt->SetNDC();
   texjetpt->SetTextFont(42);
   texjetpt->SetTextSize(0.04);
   texjetpt->SetLineWidth(2);
   texjetpt->Draw();
-  TLatex* texjeteta = new TLatex(0.22,0.68,Form("%s < |#eta^{jet}| < %s",xjjuti::number_remove_zero(jetetamin).c_str(),xjjuti::number_remove_zero(jetetamax).c_str()));
+  TLatex* texjeteta = new TLatex(0.22,0.65,Form("%s < |#eta^{jet}| < %s",xjjuti::number_remove_zero(jetetamin).c_str(),xjjuti::number_remove_zero(jetetamax).c_str()));
   texjeteta->SetNDC();
   texjeteta->SetTextFont(42);
   texjeteta->SetTextSize(0.04);
   texjeteta->SetLineWidth(2);
   texjeteta->Draw();
-  TLatex* texdr = new TLatex(0.22,0.63,Form("%s < #DeltaR < %s",xjjuti::number_remove_zero(drmin).c_str(),xjjuti::number_remove_zero(drmax).c_str()));
+  TLatex* texdr = new TLatex(0.22,0.59,Form("%s < #DeltaR < %s",xjjuti::number_remove_zero(drmin).c_str(),xjjuti::number_remove_zero(drmax).c_str()));
   texdr->SetNDC();
   texdr->SetTextFont(42);
   texdr->SetTextSize(0.04);

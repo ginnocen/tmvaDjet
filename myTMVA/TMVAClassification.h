@@ -18,7 +18,7 @@
 #if not defined(__CINT__) || defined(__MAKECINT__)
 #include "TMVA/Factory.h"
 #include "TMVA/Tools.h"
-#include "TMVAGui.C"
+#include "GUIs/TMVAGui.C"
 #endif
 
 #endif

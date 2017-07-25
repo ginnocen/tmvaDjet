@@ -15,6 +15,7 @@ namespace xjjrootuti
   void drawCMS(TString collision);
   void settex(TLatex* tex, Float_t size=0.04, Int_t align=12);
   void setleg(TLegend* leg, Float_t size=0.04);
+  void setbranchaddress(TTree* nt, const char* bname, void* addr);
 }
 
 void xjjrootuti::setgstyle()
@@ -31,7 +32,7 @@ void xjjrootuti::setgstyle()
   gStyle->SetTitleX(.0f);
 }
 
-void xjjrootuti::sethempty(TH2F* hempty, float xoffset=0, float yoffset=0)
+void xjjrootuti::sethempty(TH2F* hempty, float xoffset/*=0*/, float yoffset/*=0*/)
 {
   hempty->GetXaxis()->CenterTitle();
   hempty->GetYaxis()->CenterTitle();
@@ -48,92 +49,106 @@ void xjjrootuti::sethempty(TH2F* hempty, float xoffset=0, float yoffset=0)
   hempty->SetStats(0);
 }
 
-void xjjrootuti::setth1(TH1F* hempty, float xoffset=0, float yoffset=0)
+void xjjrootuti::setth1(TH1F* hempty, float xoffset/*=0*/, float yoffset/*=0*/)
 {
   hempty->GetXaxis()->CenterTitle();
   hempty->GetYaxis()->CenterTitle();
-  hempty->GetXaxis()->SetTitleOffset(0.9+xoffset);
-  hempty->GetYaxis()->SetTitleOffset(1.10+yoffset);
+  hempty->GetXaxis()->SetTitleOffset(1.10+xoffset);
+  hempty->GetYaxis()->SetTitleOffset(1.30+yoffset);
   hempty->GetXaxis()->SetTitleSize(0.05);
   hempty->GetYaxis()->SetTitleSize(0.05);
   hempty->GetXaxis()->SetTitleFont(42);
   hempty->GetYaxis()->SetTitleFont(42);
   hempty->GetXaxis()->SetLabelFont(42);
   hempty->GetYaxis()->SetLabelFont(42);
-  hempty->GetXaxis()->SetLabelSize(0.035);
-  hempty->GetYaxis()->SetLabelSize(0.035);
+  hempty->GetXaxis()->SetLabelSize(0.045);
+  hempty->GetYaxis()->SetLabelSize(0.045);
   hempty->SetStats(0);
+  hempty->SetMarkerStyle(20);
+  hempty->SetMarkerSize(1.1);
+  hempty->SetMarkerColor(kBlack);
+  hempty->SetLineColor(kBlack);
 }
 
-void xjjrootuti::setth1(TH1D* hempty, float xoffset=0, float yoffset=0)
+void xjjrootuti::setth1(TH1D* hempty, float xoffset/*=0*/, float yoffset/*=0*/)
 {
   hempty->GetXaxis()->CenterTitle();
   hempty->GetYaxis()->CenterTitle();
-  hempty->GetXaxis()->SetTitleOffset(0.9+xoffset);
-  hempty->GetYaxis()->SetTitleOffset(1.10+yoffset);
+  hempty->GetXaxis()->SetTitleOffset(1.10+xoffset);
+  hempty->GetYaxis()->SetTitleOffset(1.30+yoffset);
   hempty->GetXaxis()->SetTitleSize(0.05);
   hempty->GetYaxis()->SetTitleSize(0.05);
   hempty->GetXaxis()->SetTitleFont(42);
   hempty->GetYaxis()->SetTitleFont(42);
   hempty->GetXaxis()->SetLabelFont(42);
   hempty->GetYaxis()->SetLabelFont(42);
-  hempty->GetXaxis()->SetLabelSize(0.035);
-  hempty->GetYaxis()->SetLabelSize(0.035);
+  hempty->GetXaxis()->SetLabelSize(0.045);
+  hempty->GetYaxis()->SetLabelSize(0.045);
   hempty->SetStats(0);
+  hempty->SetMarkerStyle(20);
+  hempty->SetMarkerSize(1.1);
+  hempty->SetMarkerColor(kBlack);
+  hempty->SetLineColor(kBlack);
 }
 
-void xjjrootuti::settgr(TGraph* gr, float xoffset=0, float yoffset=0)
+void xjjrootuti::settgr(TGraph* gr, float xoffset/*=0*/, float yoffset/*=0*/)
 {
   gr->GetXaxis()->CenterTitle();
   gr->GetYaxis()->CenterTitle();
-  gr->GetXaxis()->SetTitleOffset(0.9+xoffset);
-  gr->GetYaxis()->SetTitleOffset(1.10+yoffset);
+  gr->GetXaxis()->SetTitleOffset(1.10+xoffset);
+  gr->GetYaxis()->SetTitleOffset(1.30+yoffset);
   gr->GetXaxis()->SetTitleSize(0.05);
   gr->GetYaxis()->SetTitleSize(0.05);
   gr->GetXaxis()->SetTitleFont(42);
   gr->GetYaxis()->SetTitleFont(42);
   gr->GetXaxis()->SetLabelFont(42);
   gr->GetYaxis()->SetLabelFont(42);
-  gr->GetXaxis()->SetLabelSize(0.035);
-  gr->GetYaxis()->SetLabelSize(0.035);
+  gr->GetXaxis()->SetLabelSize(0.045);
+  gr->GetYaxis()->SetLabelSize(0.045);
   gr->SetMarkerStyle(20);
-  gr->SetMarkerSize(1.0);
+  gr->SetMarkerSize(1.1);
+  gr->SetMarkerColor(kBlack);
+  gr->SetLineColor(kBlack);
 }
 
-void xjjrootuti::settgr(TGraphErrors* gr, float xoffset=0, float yoffset=0)
+void xjjrootuti::settgr(TGraphErrors* gr, float xoffset/*=0*/, float yoffset/*=0*/)
 {
   gr->GetXaxis()->CenterTitle();
   gr->GetYaxis()->CenterTitle();
-  gr->GetXaxis()->SetTitleOffset(0.9+xoffset);
-  gr->GetYaxis()->SetTitleOffset(1.10+yoffset);
+  gr->GetXaxis()->SetTitleOffset(1.10+xoffset);
+  gr->GetYaxis()->SetTitleOffset(1.30+yoffset);
   gr->GetXaxis()->SetTitleSize(0.05);
   gr->GetYaxis()->SetTitleSize(0.05);
   gr->GetXaxis()->SetTitleFont(42);
   gr->GetYaxis()->SetTitleFont(42);
   gr->GetXaxis()->SetLabelFont(42);
   gr->GetYaxis()->SetLabelFont(42);
-  gr->GetXaxis()->SetLabelSize(0.035);
-  gr->GetYaxis()->SetLabelSize(0.035);
+  gr->GetXaxis()->SetLabelSize(0.045);
+  gr->GetYaxis()->SetLabelSize(0.045);
   gr->SetMarkerStyle(20);
-  gr->SetMarkerSize(1.0);
+  gr->SetMarkerSize(1.1);
+  gr->SetMarkerColor(kBlack);
+  gr->SetLineColor(kBlack);
 }
 
-void xjjrootuti::settgr(TGraphAsymmErrors* gr, float xoffset=0, float yoffset=0)
+void xjjrootuti::settgr(TGraphAsymmErrors* gr, float xoffset/*=0*/, float yoffset/*=0*/)
 {
   gr->GetXaxis()->CenterTitle();
   gr->GetYaxis()->CenterTitle();
-  gr->GetXaxis()->SetTitleOffset(0.9+xoffset);
-  gr->GetYaxis()->SetTitleOffset(1.10+yoffset);
+  gr->GetXaxis()->SetTitleOffset(1.10+xoffset);
+  gr->GetYaxis()->SetTitleOffset(1.30+yoffset);
   gr->GetXaxis()->SetTitleSize(0.05);
   gr->GetYaxis()->SetTitleSize(0.05);
   gr->GetXaxis()->SetTitleFont(42);
   gr->GetYaxis()->SetTitleFont(42);
   gr->GetXaxis()->SetLabelFont(42);
   gr->GetYaxis()->SetLabelFont(42);
-  gr->GetXaxis()->SetLabelSize(0.035);
-  gr->GetYaxis()->SetLabelSize(0.035);
+  gr->GetXaxis()->SetLabelSize(0.045);
+  gr->GetYaxis()->SetLabelSize(0.045);
   gr->SetMarkerStyle(20);
-  gr->SetMarkerSize(1.0);
+  gr->SetMarkerSize(1.1);
+  gr->SetMarkerColor(kBlack);
+  gr->SetLineColor(kBlack);
 }
 
 void xjjrootuti::drawCMS(TString collision)
@@ -152,7 +167,7 @@ void xjjrootuti::drawCMS(TString collision)
   texCol->Draw();
 }
 
-void xjjrootuti::settex(TLatex* tex, Float_t size=0.04, Int_t align=12)
+void xjjrootuti::settex(TLatex* tex, Float_t size/*=0.04*/, Int_t align/*=12*/)
 {
   tex->SetNDC();
   tex->SetTextFont(42);
@@ -160,13 +175,18 @@ void xjjrootuti::settex(TLatex* tex, Float_t size=0.04, Int_t align=12)
   tex->SetTextSize(size);
 }
 
-void xjjrootuti::setleg(TLegend* leg, Float_t size=0.04)
+void xjjrootuti::setleg(TLegend* leg, Float_t size/*=0.04*/)
 {
   leg->SetBorderSize(0);
   leg->SetFillStyle(0);
   leg->SetTextSize(size);
 }
 
+void xjjrootuti::setbranchaddress(TTree* nt, const char* bname, void* addr)
+{
+  nt->SetBranchStatus(bname, 1);
+  nt->SetBranchAddress(bname, addr);
+}
 
 /*
 void removeError(TH1F* h)
