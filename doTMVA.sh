@@ -2,13 +2,13 @@
 # doTMVA.sh #
 
 # -1: loop all bins
-jCOLSYST=2
+jCOLSYST=-1
 iPT=-1
 lDR=-1
 #
-DOTMVA=1
+DOTMVA=0
 DOREADXML_SAVEHIST=0
-DOREADXML_USEHIST=0
+DOREADXML_USEHIST=1
 
 ##
 # nCOL loop
@@ -33,7 +33,7 @@ INPUTSNAME=('/export/d00/scratch/jwang/Djets/MC/tmva_DjetFiles_20170506_pp_5TeV_
     '/export/d00/scratch/jwang/Djets/MC/tmva_DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight_jetpt_40_jeteta_0p0_2p0.root')
 INPUTBNAME=('/export/d00/scratch/jwang/Djets/data/tmva_DjetFiles_20170619_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614_jetpt_40_jeteta_0p0_2p0.root'
     '/export/d00/scratch/jwang/Djets/data/tmva_DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1_jetpt_80_jeteta_0p0_2p0.root'
-    '/export/d00/scratch/jwang/Djets/data/tmva_DjetFiles_HIHardProbes_PbPb_5TeV_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1_jetpt_40_jeteta_0p0_2p0.root')
+    '/export/d00/scratch/jwang/Djets/data/tmva_DjetFiles_HIHardProbes_PbPb_5TeV_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1_jetpt_40_jeteta_0p0_2p0_evt1per.root')
 CUT=('TMath::Abs(Dtrk1Eta)<2.0&&TMath::Abs(Dtrk2Eta)<2.0&&Dtrk1Pt>2.0&&Dtrk2Pt>2.0&&(Dtrk1PtErr/Dtrk1Pt)<0.3&&(Dtrk2PtErr/Dtrk2Pt)<0.3&&Dtrk1highPurity&&Dtrk2highPurity&&fabs(Dy)<2.0&&(DsvpvDistance/DsvpvDisErr)>0.0&&Dalpha<0.2&&Dchi2cl>0.05'
     'TMath::Abs(Dtrk1Eta)<2.0&&TMath::Abs(Dtrk2Eta)<2.0&&Dtrk1Pt>2.0&&Dtrk2Pt>2.0&&(Dtrk1PtErr/Dtrk1Pt)<0.3&&(Dtrk2PtErr/Dtrk2Pt)<0.3&&Dtrk1highPurity&&Dtrk2highPurity&&fabs(Dy)<2.0&&(DsvpvDistance/DsvpvDisErr)>0.0&&Dalpha<0.2&&Dchi2cl>0.05'
     'TMath::Abs(Dtrk1Eta)<2.0&&TMath::Abs(Dtrk2Eta)<2.0&&Dtrk1Pt>2.0&&Dtrk2Pt>2.0&&(Dtrk1PtErr/Dtrk1Pt)<0.3&&(Dtrk2PtErr/Dtrk2Pt)<0.3&&Dtrk1highPurity&&Dtrk2highPurity&&fabs(Dy)<2.0&&(DsvpvDistance/DsvpvDisErr)>0.0&&Dalpha<0.2&&Dchi2cl>0.05')
@@ -49,7 +49,7 @@ INPUTMCNAME=("${INPUTSNAME[0]}"
     "${INPUTSNAME[2]}")
 INPUTDANAME=("${INPUTBNAME[0]}"
     "${INPUTBNAME[1]}"
-    "${INPUTBNAME[2]}")
+    '/export/d00/scratch/jwang/Djets/data/tmva_DjetFiles_HIHardProbes_PbPb_5TeV_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1_jetpt_40_jeteta_0p0_2p0.root')
 
 # Do not touch the macros below if you don't know what they mean #
 ##
